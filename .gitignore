@@ -1,24 +1,132 @@
-# Compiled class file
+# ------------------------------------------------------------------------------
+#                         构建工具相关
+# ------------------------------------------------------------------------------
+# Maven 忽略项
+target/
+release.properties
+
+# Gradle 忽略项
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+
+# 通用
+**/mvnw
+**/mvnw.cmd
+**/gradlew
+**/gradlew.bat
+
+# ------------------------------------------------------------------------------
+#                         开发环境与 IDE
+# ------------------------------------------------------------------------------
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+*.ids
+*.orig
+/out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+tmp/
+.factorypath
+
+# VS Code
+.vscode/
+
+# NetBeans
+nbproject/
+.nb-gradle/
+
+# ------------------------------------------------------------------------------
+#                         编译与生成文件
+# ------------------------------------------------------------------------------
+# 编译类文件
 *.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
 *.war
-*.nar
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# 打包文件
 *.ear
 *.zip
 *.tar.gz
-*.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+# ------------------------------------------------------------------------------
+#                         日志与临时文件
+# ------------------------------------------------------------------------------
+# 日志文件
+*.log
+logs/
+**/logs/
+
+# 临时文件
+*.tmp
+*.bak
+*.swp
+*~.nib
+*.lock
+
+# Mac系统文件
+.DS_Store
+
+# Windows系统文件
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux临时文件
+*~
+
+# ------------------------------------------------------------------------------
+#                         配置与敏感信息
+# ------------------------------------------------------------------------------
+# 本地环境配置（按需修改）
+application.yml
+application-dev.yml
+!/src/main/resources/application.example.properties  # 保留示例文件
+
+# 密钥文件
+*.keystore
+*.jks
+
+# 数据库文件（如H2、SQLite）
+*.db
+*.h2.db
+*.mv.db
+
+# ------------------------------------------------------------------------------
+#                         测试相关
+# ------------------------------------------------------------------------------
+# 测试覆盖率报告
+jacoco.exec
+.coverage
+**/coverage/
+**/test-results/
+
+# ------------------------------------------------------------------------------
+#                         其他
+# ------------------------------------------------------------------------------
+# Docker忽略项（可选）
+docker-compose.yml.version
+docker-compose.override.yml
+
+# 前端依赖（如项目包含前端）
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 本地开发工具配置
+.env
+.env.local
+.terraform/
+
+/docs/sql/
