@@ -103,9 +103,9 @@ public class AuthProperties {
         private String prefix = "Bearer";
 
         /**
-         * 令牌密钥
+         * 令牌密钥（需要通过配置注入）
          */
-        private String secret = "abcdefghijklmnopqrstuvwxyz";
+        private String secret ;
 
         /**
          * 令牌有效期（默认30分钟）

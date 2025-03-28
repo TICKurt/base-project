@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * JWT Token服务实现类
@@ -52,7 +53,8 @@ public class JwtTokenServiceImpl implements TokenService {
         } catch (JsonProcessingException e) {
             log.error("序列化用户信息失败", e);
         }
-        
+
+        log.info("序列化用户信息authProperties："+authProperties.getToken().getSecret());
         return JwtUtils.createToken(claims, authProperties.getToken().getSecret(), 
                 authProperties.getToken().getExpireTime());
     }

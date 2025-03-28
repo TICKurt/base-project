@@ -35,6 +35,7 @@ public class RedisTokenServiceImpl implements TokenService {
 
     @Override
     public String createToken(LoginUserVO loginUser) {
+        log.info("序列化用户信息authProperties："+authProperties.getToken().getSecret());
         // 生成token
         String token = UUID.randomUUID().toString();
         

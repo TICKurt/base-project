@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
+import javax.annotation.PostConstruct;
+import org.springframework.core.env.Environment;
 
 import com.example.auth.aspect.AuthAspect;
 import com.example.auth.handler.GlobalExceptionHandler;
@@ -19,6 +21,7 @@ import com.example.auth.service.impl.RedisTokenServiceImpl;
 import com.example.auth.web.AuthInterceptor;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 认证授权自动配置类
@@ -28,9 +31,13 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @Import({AuthProperties.class, GlobalExceptionHandler.class})
 @ConditionalOnProperty(prefix = "auth", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Slf4j
 public class AuthAutoConfiguration {
-
-    private final AuthProperties authProperties;
+    @Autowired
+    private AuthProperties authProperties;
+    
+    @Autowired
+    private Environment environment;
     
     // 添加RedisTemplate字段，设为可选
     private RedisTemplate<String, Object> redisTemplate;
@@ -44,6 +51,33 @@ public class AuthAutoConfiguration {
     @Autowired(required = false)
     public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
+    }
+    
+    /**
+     * 初始化后处理，确保配置正确加载
+     */
+    @PostConstruct
+    public void init() {
+        // 检查token密钥配置
+        if (authProperties.getToken().getSecret() == null || authProperties.getToken().getSecret().isEmpty()) {
+            // 尝试从环境变量中读取
+            String secret = environment.getProperty("auth.token.secret");
+            if (secret != null && !secret.isEmpty()) {
+                log.info("从环境变量加载JWT密钥配置");
+                authProperties.getToken().setSecret(secret);
+            } else {
+                // 设置默认安全密钥
+//                String defaultSecret = "base-project-default-jwt-secret-key-must-be-at-least-32-chars";
+                log.warn("未找到JWT密钥配置，建议在生产环境中配置密钥auth:token:secret");
+//                authProperties.getToken().setSecret(defaultSecret);
+            }
+        }
+        
+        // 记录当前使用的配置
+        log.info("认证模块配置：enabled={}, tokenStoreType={}, secretConfigured={}", 
+                authProperties.getEnabled(),
+                authProperties.getToken().getStoreType(),
+                authProperties.getToken().getSecret() != null);
     }
 
     /**
