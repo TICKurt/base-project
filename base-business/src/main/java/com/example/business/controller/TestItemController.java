@@ -12,11 +12,14 @@ import com.example.business.domain.dto.TestItemDTO;
 import com.example.business.domain.vo.TestItemVO;
 import com.example.business.service.TestItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -79,34 +82,7 @@ public class TestItemController {
             LoginUserVO loginUser = new LoginUserVO();
             loginUser.setUserId(2L);
             loginUser.setUsername("user1");
-            loginUser.setName("普通用户1");
-            
-            // 设置角色
-            Set<String> roles = new HashSet<>();
-            roles.add("user");
-            loginUser.setRoles(roles);
-            
-            // 设置权限
-            Set<String> permissions = new HashSet<>();
-            permissions.add("test:item:add");
-            permissions.add("test:item:edit");
-            loginUser.setPermissions(permissions);
-            
-            // 生成token
-            String token = tokenService.createToken(loginUser);
-            loginUser.setToken(token);
-            
-            // 设置过期时间
-            Date expireTime = new Date(System.currentTimeMillis() + 30 * 60 * 1000); // 30分钟后
-            loginUser.setExpireTime(expireTime);
-            
-            return ResponseResult.success(loginUser);
-        } else if ("user2".equals(username) && "pass456".equals(password)) {
-            // 普通用户登录
-            LoginUserVO loginUser = new LoginUserVO();
-            loginUser.setUserId(3L);
-            loginUser.setUsername("user2");
-            loginUser.setName("普通用户2");
+            loginUser.setName("用户1");
             
             // 设置角色
             Set<String> roles = new HashSet<>();
@@ -127,13 +103,41 @@ public class TestItemController {
             loginUser.setExpireTime(expireTime);
             
             return ResponseResult.success(loginUser);
+        } else if ("user2".equals(username) && "pass456".equals(password)) {
+            // 编辑用户登录
+            LoginUserVO loginUser = new LoginUserVO();
+            loginUser.setUserId(3L);
+            loginUser.setUsername("user2");
+            loginUser.setName("用户2");
+            
+            // 设置角色
+            Set<String> roles = new HashSet<>();
+            roles.add("editor");
+            loginUser.setRoles(roles);
+            
+            // 设置权限
+            Set<String> permissions = new HashSet<>();
+            permissions.add("test:item:view");
+            permissions.add("test:item:add");
+            permissions.add("test:item:edit");
+            loginUser.setPermissions(permissions);
+            
+            // 生成token
+            String token = tokenService.createToken(loginUser);
+            loginUser.setToken(token);
+            
+            // 设置过期时间
+            Date expireTime = new Date(System.currentTimeMillis() + 30 * 60 * 1000); // 30分钟后
+            loginUser.setExpireTime(expireTime);
+            
+            return ResponseResult.success(loginUser);
+        } else {
+            return ResponseResult.fail("用户名或密码错误");
         }
-        
-        return ResponseResult.fail("用户名或密码错误");
     }
 
     /**
-     * 分页查询
+     * 分页查询项目
      *
      * @param current 当前页
      * @param size 每页大小
@@ -147,15 +151,15 @@ public class TestItemController {
             @RequestParam(defaultValue = "10") long size,
             @RequestParam(required = false) String name) {
         Page<TestItemVO> page = new Page<>(current, size);
-        page = testItemService.page(page, name);
-        return ResponseResult.success(page);
+        Page<TestItemVO> result = testItemService.page(page, name);
+        return ResponseResult.success(result);
     }
 
     /**
-     * 根据ID获取
+     * 根据ID获取项目
      *
      * @param id 项目ID
-     * @return 项目详情
+     * @return 项目信息
      */
     @GetMapping("/{id}")
     @RequiresLogin
@@ -245,6 +249,47 @@ public class TestItemController {
         }
         
         return ResponseResult.success(result);
+    }
+    
+    /**
+     * 获取系统管理信息
+     * 需要管理员角色
+     *
+     * @return 系统管理信息
+     */
+    @GetMapping("/admin-info")
+    @RequiresLogin
+    @RequiresRole("admin")
+    public ResponseResult<Map<String, Object>> getAdminInfo() {
+        Map<String, Object> adminInfo = new HashMap<>();
+        adminInfo.put("totalItems", 100);  // 示例数据，实际应从服务层获取
+        adminInfo.put("activeUsers", 25);
+        adminInfo.put("systemStatus", "正常运行");
+        adminInfo.put("lastBackupTime", new Date());
+        adminInfo.put("cpuUsage", "32%");
+        adminInfo.put("memoryUsage", "1.8GB/4GB");
+        adminInfo.put("diskUsage", "120GB/500GB");
+        
+        return ResponseResult.success(adminInfo);
+    }
+    
+    /**
+     * 仅编辑者可见的接口
+     * 需要editor角色
+     *
+     * @return 编辑者专用信息
+     */
+    @GetMapping("/editor-actions")
+    @RequiresLogin
+    @RequiresRole("editor")
+    public ResponseResult<Map<String, Object>> getEditorActions() {
+        Map<String, Object> editorActions = new HashMap<>();
+        editorActions.put("drafts", 5);
+        editorActions.put("pendingReviews", 3);
+        editorActions.put("availableTemplates", 10);
+        editorActions.put("lastEditTime", new Date());
+        
+        return ResponseResult.success(editorActions);
     }
 
 
