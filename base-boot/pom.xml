@@ -24,10 +24,10 @@
         <!--            <groupId>com.example</groupId>-->
         <!--            <artifactId>base-auth</artifactId>-->
         <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>com.example</groupId>-->
-        <!--            <artifactId>base-system</artifactId>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>base-common</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>base-business</artifactId>
