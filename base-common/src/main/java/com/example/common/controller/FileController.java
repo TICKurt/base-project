@@ -1,5 +1,6 @@
 package com.example.common.controller;
 
+import com.example.auth.annotation.RequiresPermission;
 import com.example.common.model.FileInfo;
 import com.example.common.service.FileService;
 import com.example.common.util.FileUtils;
@@ -44,6 +45,7 @@ public class FileController {
      * @param directory 目录（可选）
      * @return 文件信息
      */
+    @RequiresPermission("common:file:upload")
     @PostMapping("/upload")
     public ResponseEntity<FileInfo> upload(
             @RequestParam("file") MultipartFile file,
@@ -69,6 +71,7 @@ public class FileController {
      * @param directory 目录（可选）
      * @return 文件信息列表
      */
+    @RequiresPermission("common:file:upload")
     @PostMapping("/batch-upload")
     public ResponseEntity<List<FileInfo>> batchUpload(
             @RequestParam("files") List<MultipartFile> files,
@@ -93,6 +96,7 @@ public class FileController {
      * @param filePath 文件路径
      * @return 文件
      */
+    @RequiresPermission("common:file:download")
     @GetMapping("/download/**")
     public ResponseEntity<Resource> download(@RequestParam("path") String filePath) {
         // 检查文件是否存在
@@ -151,6 +155,7 @@ public class FileController {
      * @param filePath 文件路径
      * @return 删除结果
      */
+    @RequiresPermission("common:file:delete")
     @DeleteMapping
     public ResponseEntity<Map<String, Object>> delete(@RequestParam("path") String filePath) {
         Map<String, Object> result = new HashMap<>();
@@ -167,6 +172,7 @@ public class FileController {
      * @param filePath 文件路径
      * @return 文件信息
      */
+    @RequiresPermission("common:file:info")
     @GetMapping("/info")
     public ResponseEntity<Map<String, Object>> getInfo(@RequestParam("path") String filePath) {
         Map<String, Object> result = new HashMap<>();

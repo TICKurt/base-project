@@ -15,6 +15,10 @@
     <description>公共模块，存放共享组件、工具类等</description>
     
     <dependencies>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>base-auth</artifactId>
+        </dependency>
         <!-- Spring Boot 依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
