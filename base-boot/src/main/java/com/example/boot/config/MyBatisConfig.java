@@ -1,4 +1,4 @@
-package com.example.business.config;
+package com.example.boot.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
@@ -8,13 +8,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * MyBatis Plus配置类
+ * MyBatis Plus 统一配置类
+ * 同时扫描业务模块和通用模块的 Mapper
  * 
  * @author example
  */
 @Configuration
-@MapperScan("com.example.business.mapper")
-public class MybatisPlusConfig {
+@MapperScan({"com.example.business.mapper", "com.example.common.mapper"})
+public class MyBatisConfig {
 
     /**
      * 分页插件

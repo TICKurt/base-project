@@ -12,7 +12,6 @@ import com.example.business.domain.dto.TestItemDTO;
 import com.example.business.domain.vo.TestItemVO;
 import com.example.business.service.TestItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,6 +65,7 @@ public class TestItemController {
             permissions.add("test:item:edit");
             permissions.add("test:item:delete");
             permissions.add("test:item:view");
+            permissions.add("system:dict:query");
             loginUser.setPermissions(permissions);
             
             // 生成token
