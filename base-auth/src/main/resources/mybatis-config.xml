@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 全局参数 -->
+    <settings>
+        <!-- 使用驼峰命名法转换字段 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 允许 JDBC 支持自动生成主键 -->
+        <setting name="useGeneratedKeys" value="true"/>
+        <!-- 配置默认的执行器 -->
+        <setting name="defaultExecutorType" value="REUSE"/>
+        <!-- 指定 MyBatis 所用日志的具体实现 -->
+        <setting name="logImpl" value="SLF4J"/>
+        <!-- 使用列标签代替列名 -->
+        <setting name="useColumnLabel" value="true"/>
+        <!-- 开启驼峰命名转换：Table{create_time} -> Entity{createTime} -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 全局地开启或关闭配置文件中的所有映射器已经配置的任何缓存 -->
+        <setting name="cacheEnabled" value="false"/>
+        <!-- 允许或不允许多种结果集从一个单独的语句中返回（需要适合的驱动） -->
+        <setting name="multipleResultSetsEnabled" value="true"/>
+        <!-- 使用jdbc的getGeneratedKeys获取数据库自增主键值 -->
+        <setting name="useGeneratedKeys" value="true"/>
+        <!-- 配置默认的执行器.SIMPLE就是普通的执行器;REUSE执行器会重用预处理语句(prepared statements);BATCH执行器将重用语句并执行批量更新 -->
+        <setting name="defaultExecutorType" value="REUSE"/>
+        <!-- 设置超时时间，它决定驱动等待数据库响应的秒数 -->
+        <setting name="defaultStatementTimeout" value="25000"/>
+    </settings>
+
+    <!-- 类型别名 -->
+    <typeAliases>
+        <package name="com.example.auth.entity"/>
+    </typeAliases>
+</configuration> 

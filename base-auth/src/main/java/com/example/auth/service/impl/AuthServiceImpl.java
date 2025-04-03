@@ -59,9 +59,9 @@ public class AuthServiceImpl implements AuthService {
         if (loginUser == null || CollectionUtils.isEmpty(loginUser.getPermissions())) {
             return false;
         }
-        
+
         // 管理员拥有所有权限
-        if (loginUser.getIsAdmin() != null && loginUser.getIsAdmin() == 1) {
+        if (loginUser.getUserType() != null && loginUser.getUserType() == 0) {
             return true;
         }
         
@@ -81,9 +81,9 @@ public class AuthServiceImpl implements AuthService {
         if (loginUser == null || CollectionUtils.isEmpty(loginUser.getPermissions())) {
             return false;
         }
-        
+
         // 管理员拥有所有权限
-        if (loginUser.getIsAdmin() != null && loginUser.getIsAdmin() == 1) {
+        if (loginUser.getUserType() != null && loginUser.getUserType() == 0) {
             return true;
         }
         
@@ -119,17 +119,17 @@ public class AuthServiceImpl implements AuthService {
         
         // 获取当前登录用户
         LoginUserVO loginUser = getLoginUser();
-        if (loginUser == null || CollectionUtils.isEmpty(loginUser.getRoles())) {
+        if (loginUser == null || CollectionUtils.isEmpty(loginUser.getRoleCodes())) {
             return false;
         }
-        
+
         // 管理员拥有所有角色权限
-        if (loginUser.getIsAdmin() != null && loginUser.getIsAdmin() == 1) {
+        if (loginUser.getUserType() != null && loginUser.getUserType() == 0) {
             return true;
         }
         
         // 判断是否拥有该角色
-        return loginUser.getRoles().contains(role);
+        return loginUser.getRoleCodes().contains(role);
     }
 
     @Override
@@ -141,23 +141,23 @@ public class AuthServiceImpl implements AuthService {
         
         // 获取当前登录用户
         LoginUserVO loginUser = getLoginUser();
-        if (loginUser == null || CollectionUtils.isEmpty(loginUser.getRoles())) {
+        if (loginUser == null || CollectionUtils.isEmpty(loginUser.getRoleCodes())) {
             return false;
         }
         
         // 管理员拥有所有角色权限
-        if (loginUser.getIsAdmin() != null && loginUser.getIsAdmin() == 1) {
+        if (loginUser.getUserType() != null && loginUser.getUserType() == 0) {
             return true;
         }
         
         // 角色集合
-        Set<String> roleSet = loginUser.getRoles();
+        java.util.List<String> roleCodes = loginUser.getRoleCodes();
         
         // 验证角色
         if (Logical.AND.name().equalsIgnoreCase(logical)) {
             // 必须全部满足
             for (String role : roles) {
-                if (!roleSet.contains(role)) {
+                if (!roleCodes.contains(role)) {
                     return false;
                 }
             }
@@ -165,7 +165,7 @@ public class AuthServiceImpl implements AuthService {
         } else {
             // 满足一个即可
             for (String role : roles) {
-                if (roleSet.contains(role)) {
+                if (roleCodes.contains(role)) {
                     return true;
                 }
             }

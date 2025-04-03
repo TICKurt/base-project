@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.mapper.SysRoleOrgMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.auth.domain.entity.SysRoleOrg">
+        <id column="id" property="id"/>
+        <result column="role_id" property="roleId"/>
+        <result column="org_id" property="orgId"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="tenant_id" property="tenantId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, role_id, org_id, create_by, create_time, tenant_id
+    </sql>
+    
+    <!-- 批量新增角色组织关联 -->
+    <insert id="batchInsert">
+        INSERT INTO sys_role_org (id, role_id, org_id, create_by, create_time, tenant_id)
+        VALUES
+        <foreach collection="orgIds" item="orgId" separator=",">
+            (REPLACE(UUID(),'-',''), #{roleId}, #{orgId}, #{createBy}, NOW(), #{tenantId})
+        </foreach>
+    </insert>
+    
+    <!-- 根据角色ID删除角色组织关联 -->
+    <delete id="deleteByRoleId">
+        DELETE FROM sys_role_org
+        WHERE role_id = #{roleId}
+    </delete>
+    
+    <!-- 根据组织ID删除角色组织关联 -->
+    <delete id="deleteByOrgId">
+        DELETE FROM sys_role_org
+        WHERE org_id = #{orgId}
+    </delete>
+    
+    <!-- 获取角色关联的组织ID列表 -->
+    <select id="selectOrgIdsByRoleId" resultType="java.lang.String">
+        SELECT org_id
+        FROM sys_role_org
+        WHERE role_id = #{roleId}
+    </select>
+    
+    <!-- 检查角色是否关联某组织 -->
+    <select id="checkRoleOrg" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM sys_role_org
+        WHERE role_id = #{roleId} AND org_id = #{orgId}
+    </select>
+    
+    <!-- 根据用户ID获取自定义数据权限的组织ID列表 -->
+    <select id="selectDataScopeOrgIdsByUserId" resultType="java.lang.String">
+        SELECT DISTINCT ro.org_id
+        FROM sys_role_org ro
+        INNER JOIN sys_user_role ur ON ro.role_id = ur.role_id
+        INNER JOIN sys_role r ON ur.role_id = r.id
+        WHERE ur.user_id = #{userId}
+          AND r.data_scope = 5 <!-- 仅获取自定义数据权限范围的组织 -->
+          AND r.status = 1
+          AND r.is_deleted = 0
+    </select>
+
+    <!-- 获取指定组织机构的所有子机构ID列表 -->
+    <select id="selectChildOrgIds" resultType="java.lang.String">
+        WITH RECURSIVE org_tree AS (
+            -- 初始查询,获取当前组织
+            SELECT id, parent_id, path
+            FROM sys_organization
+            WHERE id = #{orgId}
+            AND is_deleted = 0
+            
+            UNION ALL
+            
+            -- 递归查询所有子组织
+            SELECT o.id, o.parent_id, o.path
+            FROM sys_organization o
+            INNER JOIN org_tree ot ON o.parent_id = ot.id
+            WHERE o.is_deleted = 0
+        )
+        SELECT id FROM org_tree WHERE id != #{orgId}
+    </select>
+</mapper> 

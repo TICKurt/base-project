@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.mapper.SysUserRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.auth.domain.entity.SysUserRole">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="role_id" property="roleId"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="tenant_id" property="tenantId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, role_id, create_by, create_time, tenant_id
+    </sql>
+    
+    <!-- 批量新增用户角色关联 -->
+    <insert id="batchInsert">
+        INSERT INTO sys_user_role (id, user_id, role_id, create_by, create_time, tenant_id)
+        VALUES
+        <foreach collection="roleIds" item="roleId" separator=",">
+            (REPLACE(UUID(),'-',''), #{userId}, #{roleId}, #{createBy}, NOW(), #{tenantId})
+        </foreach>
+    </insert>
+    
+    <!-- 根据用户ID删除用户角色关联 -->
+    <delete id="deleteByUserId">
+        DELETE FROM sys_user_role
+        WHERE user_id = #{userId}
+    </delete>
+    
+    <!-- 根据角色ID删除用户角色关联 -->
+    <delete id="deleteByRoleId">
+        DELETE FROM sys_user_role
+        WHERE role_id = #{roleId}
+    </delete>
+    
+    <!-- 检查用户是否有指定角色 -->
+    <select id="checkUserRole" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM sys_user_role
+        WHERE user_id = #{userId} AND role_id = #{roleId}
+    </select>
+    
+    <!-- 获取用户角色列表 -->
+    <select id="selectRoleIdsByUserId" resultType="java.lang.String">
+        SELECT role_id
+        FROM sys_user_role
+        WHERE user_id = #{userId}
+    </select>
+    
+    <!-- 获取角色的用户列表 -->
+    <select id="selectUserIdsByRoleId" resultType="java.lang.String">
+        SELECT user_id
+        FROM sys_user_role
+        WHERE role_id = #{roleId}
+    </select>
+    
+    <!-- 统计角色关联的用户数量 -->
+    <select id="countUserByRoleId" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT user_id)
+        FROM sys_user_role
+        WHERE role_id = #{roleId}
+    </select>
+</mapper> 

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.mapper.SysOrgRelationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.auth.entity.SysOrgRelation">
+        <id column="id" property="id"/>
+        <result column="org_id" property="orgId"/>
+        <result column="target_org_id" property="targetOrgId"/>
+        <result column="relation_type" property="relationType"/>
+        <result column="description" property="description"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="tenant_id" property="tenantId"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, org_id, target_org_id, relation_type, description, create_by, create_time, update_by, update_time, tenant_id
+    </sql>
+    
+    <!-- 批量插入组织机构关系 -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO sys_org_relation
+        (id, org_id, target_org_id, relation_type, description, create_by, create_time, tenant_id)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id}, #{item.orgId}, #{item.targetOrgId}, #{item.relationType}, #{item.description}, 
+            #{item.createBy}, #{item.createTime}, #{item.tenantId})
+        </foreach>
+    </insert>
+
+    <!-- 根据组织ID删除关系 -->
+    <delete id="deleteByOrgId" parameterType="java.lang.String">
+        DELETE FROM sys_org_relation
+        WHERE org_id = #{orgId} OR target_org_id = #{orgId}
+    </delete>
+
+    <!-- 根据组织ID查询指定关系类型的所有关系 -->
+    <select id="selectByOrgIdAndType" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_org_relation
+        WHERE org_id = #{orgId}
+        <if test="relationType != null">
+            AND relation_type = #{relationType}
+        </if>
+    </select>
+
+    <!-- 根据目标组织ID查询指定关系类型的所有关系 -->
+    <select id="selectByTargetOrgIdAndType" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_org_relation
+        WHERE target_org_id = #{targetOrgId}
+        <if test="relationType != null">
+            AND relation_type = #{relationType}
+        </if>
+    </select>
+</mapper> 

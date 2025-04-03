@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.example.common.mapper.DictItemMapper;
 import com.example.common.mapper.DictTypeMapper;
 import com.example.common.model.DictItem;
@@ -44,7 +46,7 @@ public class DictServiceImpl implements DictService {
     private final DictItemMapper dictItemMapper;
 
     @Override
-    public IPage<DictTypeVO> pageDictType(Page<DictTypeVO> page, String name, String code, Integer status) {
+    public PageInfo<DictTypeVO> pageDictType(int pageNum, int pageSize, String name, String code, Integer status) {
         // 查询条件
         LambdaQueryWrapper<DictType> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.like(StringUtils.isNotBlank(name), DictType::getName, name)
@@ -53,14 +55,15 @@ public class DictServiceImpl implements DictService {
                 .orderByDesc(DictType::getCreateTime);
 
         // 分页查询
-        Page<DictType> dictTypePage = new Page<>(page.getCurrent(), page.getSize());
-        IPage<DictType> dictTypeIPage = dictTypeMapper.selectPage(dictTypePage, queryWrapper);
+        PageHelper.startPage(pageNum, pageSize);
+        List<DictType> dictTypes = dictTypeMapper.selectList(queryWrapper);
 
         // 转换为VO
-        IPage<DictTypeVO> result = new Page<>(dictTypeIPage.getCurrent(), dictTypeIPage.getSize(), dictTypeIPage.getTotal());
-        result.setRecords(dictTypeIPage.getRecords().stream().map(this::convertToTypeVO).collect(Collectors.toList()));
+        List<DictTypeVO> voList = dictTypes.stream()
+                .map(this::convertToTypeVO)
+                .collect(Collectors.toList());
         
-        return result;
+        return new PageInfo<>(voList);
     }
 
     @Override
@@ -180,8 +183,8 @@ public class DictServiceImpl implements DictService {
     }
 
     @Override
-    public IPage<DictItemVO> pageDictItem(Page<DictItemVO> page, String dictTypeId, String dictTypeCode, 
-                                         String label, Integer status) {
+    public PageInfo<DictItemVO> pageDictItem(int pageNum, int pageSize, String dictTypeId, String dictTypeCode, 
+                                            String label, Integer status) {
         // 查询条件
         LambdaQueryWrapper<DictItem> queryWrapper = Wrappers.lambdaQuery();
         queryWrapper.eq(StringUtils.isNotBlank(dictTypeId), DictItem::getDictTypeId, dictTypeId)
@@ -191,14 +194,15 @@ public class DictServiceImpl implements DictService {
                 .orderByAsc(DictItem::getSort);
 
         // 分页查询
-        Page<DictItem> dictItemPage = new Page<>(page.getCurrent(), page.getSize());
-        IPage<DictItem> dictItemIPage = dictItemMapper.selectPage(dictItemPage, queryWrapper);
+        PageHelper.startPage(pageNum, pageSize);
+        List<DictItem> dictItems = dictItemMapper.selectList(queryWrapper);
 
         // 转换为VO
-        IPage<DictItemVO> result = new Page<>(dictItemIPage.getCurrent(), dictItemIPage.getSize(), dictItemIPage.getTotal());
-        result.setRecords(dictItemIPage.getRecords().stream().map(this::convertToItemVO).collect(Collectors.toList()));
+        List<DictItemVO> voList = dictItems.stream()
+                .map(this::convertToItemVO)
+                .collect(Collectors.toList());
         
-        return result;
+        return new PageInfo<>(voList);
     }
 
     @Override

@@ -15,11 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 测试项目控制器
@@ -50,15 +46,15 @@ public class TestItemController {
         if ("admin".equals(username) && "admin123".equals(password)) {
             // 创建登录用户信息
             LoginUserVO loginUser = new LoginUserVO();
-            loginUser.setUserId(1L);
+            loginUser.setUserId("1");
             loginUser.setUsername("admin");
-            loginUser.setName("管理员");
+            loginUser.setNickname("管理员");
             
             // 设置角色
-            Set<String> roles = new HashSet<>();
-            roles.add("admin");
-            loginUser.setRoles(roles);
-            
+            List<String> roleNames = new ArrayList<>();
+            roleNames.add("admin");
+            loginUser.setRoleNames(roleNames);
+
             // 设置权限
             Set<String> permissions = new HashSet<>();
             permissions.add("test:item:add");
@@ -80,14 +76,14 @@ public class TestItemController {
         } else if ("user1".equals(username) && "pass123".equals(password)) {
             // 普通用户登录
             LoginUserVO loginUser = new LoginUserVO();
-            loginUser.setUserId(2L);
+            loginUser.setUserId("2");
             loginUser.setUsername("user1");
-            loginUser.setName("用户1");
+            loginUser.setNickname("用户1");
             
-            // 设置角色
-            Set<String> roles = new HashSet<>();
-            roles.add("user");
-            loginUser.setRoles(roles);
+            // 设置角色List<String>
+            List<String> roleNames = new ArrayList<>();
+            roleNames.add("user");
+            loginUser.setRoleNames(roleNames);
             
             // 设置权限
             Set<String> permissions = new HashSet<>();
@@ -106,15 +102,15 @@ public class TestItemController {
         } else if ("user2".equals(username) && "pass456".equals(password)) {
             // 编辑用户登录
             LoginUserVO loginUser = new LoginUserVO();
-            loginUser.setUserId(3L);
+            loginUser.setUserId("3");
             loginUser.setUsername("user2");
-            loginUser.setName("用户2");
+            loginUser.setNickname("用户2");
             
             // 设置角色
-            Set<String> roles = new HashSet<>();
-            roles.add("editor");
-            loginUser.setRoles(roles);
-            
+            List<String> roleNames = new ArrayList<>();
+            roleNames.add("editor");
+            loginUser.setRoleNames(roleNames);
+
             // 设置权限
             Set<String> permissions = new HashSet<>();
             permissions.add("test:item:view");
@@ -132,7 +128,7 @@ public class TestItemController {
             
             return ResponseResult.success(loginUser);
         } else {
-            return ResponseResult.fail("用户名或密码错误");
+            return ResponseResult.error("用户名或密码错误");
         }
     }
 
@@ -166,7 +162,7 @@ public class TestItemController {
     public ResponseResult<TestItemVO> getById(@PathVariable Integer id) {
         TestItemVO testItem = testItemService.getById(id);
         if (testItem == null) {
-            return ResponseResult.fail("项目不存在");
+            return ResponseResult.error("项目不存在");
         }
         return ResponseResult.success(testItem);
     }
@@ -196,13 +192,13 @@ public class TestItemController {
     @RequiresPermission("test:item:edit")
     public ResponseResult<TestItemVO> update(@Validated @RequestBody TestItemDTO dto) {
         if (dto.getId() == null) {
-            return ResponseResult.fail("项目ID不能为空");
+            return ResponseResult.error("项目ID不能为空");
         }
         try {
             TestItemVO testItem = testItemService.update(dto);
             return ResponseResult.success(testItem);
         } catch (RuntimeException e) {
-            return ResponseResult.fail(e.getMessage());
+            return ResponseResult.error(e.getMessage());
         }
     }
 
@@ -220,7 +216,7 @@ public class TestItemController {
             boolean result = testItemService.delete(id);
             return ResponseResult.success(result);
         } catch (RuntimeException e) {
-            return ResponseResult.fail(e.getMessage());
+            return ResponseResult.error(e.getMessage());
         }
     }
     
@@ -236,7 +232,7 @@ public class TestItemController {
     @RequiresRole("admin")
     public ResponseResult<Boolean> batchDelete(@RequestBody Integer[] ids) {
         if (ids == null || ids.length == 0) {
-            return ResponseResult.fail("项目ID不能为空");
+            return ResponseResult.error("项目ID不能为空");
         }
         
         boolean result = true;

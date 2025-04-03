@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.mapper.SysOrganizationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.auth.entity.SysOrganization">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="org_type" property="orgType"/>
+        <result column="level" property="level"/>
+        <result column="path" property="path"/>
+        <result column="sort" property="sort"/>
+        <result column="leader_id" property="leaderId"/>
+        <result column="leader_name" property="leaderName"/>
+        <result column="contact_phone" property="contactPhone"/>
+        <result column="contact_address" property="contactAddress"/>
+        <result column="status" property="status"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <!-- 组织机构视图对象结果映射 -->
+    <resultMap id="OrganizationVOResultMap" type="com.example.auth.vo.OrganizationVO">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="parent_name" property="parentName"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="org_type" property="orgType"/>
+        <result column="org_type_name" property="orgTypeName"/>
+        <result column="level" property="level"/>
+        <result column="path" property="path"/>
+        <result column="sort" property="sort"/>
+        <result column="leader_id" property="leaderId"/>
+        <result column="leader_name" property="leaderName"/>
+        <result column="contact_phone" property="contactPhone"/>
+        <result column="contact_address" property="contactAddress"/>
+        <result column="status" property="status"/>
+        <result column="status_name" property="statusName"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_by_name" property="createByName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_by_name" property="updateByName"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+        <result column="user_count" property="userCount"/>
+        <!-- 扩展字段 -->
+        <result column="credit_code" property="creditCode"/>
+        <result column="legal_person" property="legalPerson"/>
+        <result column="business_license" property="businessLicense"/>
+        <result column="registered_capital" property="registeredCapital"/>
+        <result column="founded_time" property="foundedTime"/>
+        <result column="business_scope" property="businessScope"/>
+        <result column="region_id" property="regionId"/>
+        <result column="region_name" property="regionName"/>
+        <result column="detailed_address" property="detailedAddress"/>
+        <result column="email" property="email"/>
+        <result column="fax" property="fax"/>
+        <result column="website" property="website"/>
+        <result column="logo" property="logo"/>
+        <result column="parent_relation_type" property="parentRelationType"/>
+        <result column="parent_relation_type_name" property="parentRelationTypeName"/>
+        <result column="org_category" property="orgCategory"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, parent_id, name, code, org_type, level, path, sort, leader_id, leader_name, 
+        contact_phone, contact_address, status, create_by, create_time, update_by, update_time, 
+        is_deleted, tenant_id, remark
+    </sql>
+
+    <!-- 组织机构查询结果列（包含扩展信息） -->
+    <sql id="Organization_VO_Column_List">
+        o.id, o.parent_id, p.name as parent_name, o.name, o.code, o.org_type, 
+        (CASE o.org_type 
+            WHEN 1 THEN '公司'
+            WHEN 2 THEN '部门'
+            WHEN 3 THEN '团队'
+            WHEN 4 THEN '小组'
+            ELSE '未知' 
+        END) as org_type_name,
+        o.level, o.path, o.sort, o.leader_id, o.leader_name, o.contact_phone, o.contact_address, 
+        o.status, 
+        (CASE o.status 
+            WHEN 0 THEN '禁用'
+            WHEN 1 THEN '正常'
+            ELSE '未知' 
+        END) as status_name,
+        o.create_by, u1.real_name as create_by_name, o.create_time, 
+        o.update_by, u2.real_name as update_by_name, o.update_time, o.remark,
+        e.credit_code, e.legal_person, e.business_license, e.registered_capital, e.founded_time,
+        e.business_scope, e.region_id, null as region_name, e.detailed_address, e.email, 
+        e.fax, e.website, e.logo, e.parent_relation_type, 
+        (CASE e.parent_relation_type 
+            WHEN 1 THEN '直属'
+            WHEN 2 THEN '控股'
+            WHEN 3 THEN '参股'
+            WHEN 4 THEN '合作'
+            WHEN 5 THEN '其他'
+            ELSE '未知' 
+        END) as parent_relation_type_name,
+        e.org_category,
+        (SELECT COUNT(1) FROM sys_user u WHERE u.org_id = o.id AND u.is_deleted = 0) as user_count
+    </sql>
+    
+    <!-- 组织机构查询条件 -->
+    <sql id="Organization_Query_Condition">
+        <where>
+            o.is_deleted = 0
+            <if test="org != null">
+                <if test="org.id != null and org.id != ''">
+                    AND o.id = #{org.id}
+                </if>
+                <if test="org.parentId != null and org.parentId != ''">
+                    AND o.parent_id = #{org.parentId}
+                </if>
+                <if test="org.name != null and org.name != ''">
+                    AND o.name LIKE concat('%', #{org.name}, '%')
+                </if>
+                <if test="org.code != null and org.code != ''">
+                    AND o.code = #{org.code}
+                </if>
+                <if test="org.orgType != null">
+                    AND o.org_type = #{org.orgType}
+                </if>
+                <if test="org.status != null">
+                    AND o.status = #{org.status}
+                </if>
+                <if test="org.leaderName != null and org.leaderName != ''">
+                    AND o.leader_name LIKE concat('%', #{org.leaderName}, '%')
+                </if>
+                <if test="org.tenantId != null and org.tenantId != ''">
+                    AND o.tenant_id = #{org.tenantId}
+                </if>
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询组织机构列表（包含扩展信息） -->
+    <select id="selectOrganizationPage" resultMap="OrganizationVOResultMap">
+        SELECT
+            <include refid="Organization_VO_Column_List"/>
+        FROM sys_organization o
+        LEFT JOIN sys_organization p ON o.parent_id = p.id
+        LEFT JOIN sys_organization_ext e ON o.id = e.id
+        LEFT JOIN sys_user u1 ON o.create_by = u1.id
+        LEFT JOIN sys_user u2 ON o.update_by = u2.id
+        <include refid="Organization_Query_Condition"/>
+        ORDER BY o.sort ASC, o.create_time DESC
+    </select>
+
+    <!-- 查询组织机构列表（包含扩展信息） -->
+    <select id="selectOrganizationList" resultMap="OrganizationVOResultMap">
+        SELECT
+            <include refid="Organization_VO_Column_List"/>
+        FROM sys_organization o
+        LEFT JOIN sys_organization p ON o.parent_id = p.id
+        LEFT JOIN sys_organization_ext e ON o.id = e.id
+        LEFT JOIN sys_user u1 ON o.create_by = u1.id
+        LEFT JOIN sys_user u2 ON o.update_by = u2.id
+        <include refid="Organization_Query_Condition"/>
+        ORDER BY o.sort ASC, o.create_time DESC
+    </select>
+
+    <!-- 根据ID查询组织机构详情（包含扩展信息） -->
+    <select id="selectOrganizationById" resultMap="OrganizationVOResultMap">
+        SELECT
+            <include refid="Organization_VO_Column_List"/>
+        FROM sys_organization o
+        LEFT JOIN sys_organization p ON o.parent_id = p.id
+        LEFT JOIN sys_organization_ext e ON o.id = e.id
+        LEFT JOIN sys_user u1 ON o.create_by = u1.id
+        LEFT JOIN sys_user u2 ON o.update_by = u2.id
+        WHERE o.id = #{id} AND o.is_deleted = 0
+    </select>
+
+    <!-- 查询组织机构子节点 -->
+    <select id="selectChildren" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM sys_organization
+        WHERE parent_id = #{parentId} AND is_deleted = 0
+        ORDER BY sort ASC, create_time DESC
+    </select>
+
+    <!-- 根据ID列表批量查询组织机构 -->
+    <select id="selectBatchByIds" resultMap="BaseResultMap">
+        SELECT
+            <include refid="Base_Column_List"/>
+        FROM sys_organization
+        WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        AND is_deleted = 0
+    </select>
+
+    <!-- 查询组织机构下的用户数量 -->
+    <select id="countUserByOrgId" resultType="int">
+        SELECT COUNT(1) FROM sys_user u
+        WHERE u.is_deleted = 0
+        <if test="includeChildOrg">
+            AND (
+                u.org_id = #{orgId}
+                OR u.org_id IN (
+                    SELECT id FROM sys_organization
+                    WHERE path LIKE CONCAT('%/', #{orgId}, '/%')
+                    AND is_deleted = 0
+                )
+            )
+        </if>
+        <if test="!includeChildOrg">
+            AND u.org_id = #{orgId}
+        </if>
+    </select>
+
+    <!-- 查询组织机构的子组织数量 -->
+    <select id="countChildrenByOrgId" resultType="int">
+        SELECT COUNT(1) FROM sys_organization
+        WHERE parent_id = #{orgId} AND is_deleted = 0
+    </select>
+</mapper> 

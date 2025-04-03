@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.mapper.SysMenuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.auth.entity.SysMenu">
+        <id column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="name" property="name"/>
+        <result column="path" property="path"/>
+        <result column="component" property="component"/>
+        <result column="redirect" property="redirect"/>
+        <result column="perms" property="perms"/>
+        <result column="type" property="menuType"/>
+        <result column="icon" property="icon"/>
+        <result column="order_num" property="sort"/>
+        <result column="hidden" property="visible"/>
+        <result column="status" property="status"/>
+        <result column="level" property="level"/>
+        <result column="tree_path" property="treePath"/>
+        <result column="keep_alive" property="keepAlive"/>
+        <result column="always_show" property="alwaysShow"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <!-- 根据用户ID查询权限 -->
+    <select id="selectPermissionsByUserId" parameterType="String" resultType="String">
+        SELECT DISTINCT
+            m.perms
+        FROM
+            sys_menu m
+            LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+            LEFT JOIN sys_user_role ur ON rm.role_id = ur.role_id
+        WHERE
+            ur.user_id = #{userId}
+            AND m.status = 1
+            AND m.perms IS NOT NULL
+            AND m.perms != ''
+    </select>
+
+    <!-- 根据用户ID查询菜单 -->
+    <select id="selectMenusByUserId" parameterType="String" resultMap="BaseResultMap">
+        SELECT DISTINCT
+            m.id, m.parent_id, m.name, m.path, m.component, m.redirect, m.perms, m.type, m.icon,
+            m.order_num, m.hidden, m.status, m.level, m.tree_path, m.keep_alive, m.always_show,
+            m.create_by, m.create_time, m.update_by, m.update_time, m.remark
+        FROM
+            sys_menu m
+            LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+            LEFT JOIN sys_user_role ur ON rm.role_id = ur.role_id
+        WHERE
+            ur.user_id = #{userId}
+            AND m.status = 1
+        ORDER BY
+            m.parent_id, m.order_num
+    </select>
+
+    <!-- 根据角色ID查询菜单ID列表 -->
+    <select id="selectMenuIdsByRoleId" parameterType="String" resultType="String">
+        SELECT
+            m.id
+        FROM
+            sys_menu m
+            LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+        WHERE
+            rm.role_id = #{roleId}
+        ORDER BY
+            m.parent_id, m.order_num
+    </select>
+
+    <!-- 查询菜单是否有子菜单 -->
+    <select id="hasChildByMenuId" resultType="Integer">
+        SELECT
+            COUNT(1)
+        FROM
+            sys_menu
+        WHERE
+            parent_id = #{menuId}
+    </select>
+
+    <!-- 查询所有菜单信息 -->
+    <select id="selectAllMenus" resultMap="BaseResultMap">
+        SELECT
+            id, parent_id, name, path, component, redirect, perms, type, icon,
+            order_num, hidden, status, level, tree_path, keep_alive, always_show,
+            create_by, create_time, update_by, update_time, remark
+        FROM
+            sys_menu
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="type != null">
+                AND type = #{type}
+            </if>
+        </where>
+        ORDER BY
+            parent_id, order_num
+    </select>
+
+    <!-- 根据父菜单ID查询子菜单 -->
+    <select id="selectChildrenByParentId" resultMap="BaseResultMap">
+        SELECT
+            id, parent_id, name, path, component, redirect, perms, type, icon,
+            order_num, hidden, status, level, tree_path, keep_alive, always_show,
+            create_by, create_time, update_by, update_time, remark
+        FROM
+            sys_menu
+        WHERE
+            parent_id = #{parentId}
+        ORDER BY
+            order_num
+    </select>
+
+    <!-- 根据菜单类型查询菜单 -->
+    <select id="selectMenusByType" resultMap="BaseResultMap">
+        SELECT
+            id, parent_id, name, path, component, redirect, perms, type, icon,
+            order_num, hidden, status, level, tree_path, keep_alive, always_show,
+            create_by, create_time, update_by, update_time, remark
+        FROM
+            sys_menu
+        WHERE
+            type = #{type}
+            AND status = 1
+        ORDER BY
+            parent_id, order_num
+    </select>
+
+    <!-- 根据多个角色ID查询菜单权限标识 -->
+    <select id="selectPermissionsByRoleIds" resultType="String">
+        SELECT DISTINCT
+            m.perms
+        FROM
+            sys_menu m
+            LEFT JOIN sys_role_menu rm ON m.id = rm.menu_id
+        WHERE
+            rm.role_id IN
+            <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+                #{roleId}
+            </foreach>
+            AND m.status = 1
+            AND m.perms IS NOT NULL
+            AND m.perms != ''
+    </select>
+</mapper> 

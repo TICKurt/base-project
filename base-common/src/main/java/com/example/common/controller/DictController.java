@@ -1,7 +1,6 @@
 package com.example.common.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageInfo;
 import com.example.auth.annotation.RequiresPermission;
 import com.example.auth.utils.ResponseResult;
 import com.example.common.model.dto.DictItemDTO;
@@ -35,8 +34,8 @@ public class DictController {
     /**
      * 分页查询字典类型
      *
-     * @param page 页码
-     * @param size 每页大小
+     * @param pageNum 页码
+     * @param pageSize 每页大小
      * @param name 字典名称（可选）
      * @param code 字典编码（可选）
      * @param status 状态（可选）
@@ -44,14 +43,13 @@ public class DictController {
      */
     @GetMapping("/type/page")
     @RequiresPermission("system:dict:list")
-    public ResponseResult<IPage<DictTypeVO>> pageDictType(
-            @RequestParam(defaultValue = "1") long page,
-            @RequestParam(defaultValue = "10") long size,
+    public ResponseResult<PageInfo<DictTypeVO>> pageDictType(
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String code,
             @RequestParam(required = false) Integer status) {
-        Page<DictTypeVO> pagination = new Page<>(page, size);
-        IPage<DictTypeVO> result = dictService.pageDictType(pagination, name, code, status);
+        PageInfo<DictTypeVO> result = dictService.pageDictType(pageNum, pageSize, name, code, status);
         return ResponseResult.success(result);
     }
 
@@ -137,8 +135,8 @@ public class DictController {
     /**
      * 分页查询字典项
      *
-     * @param page 页码
-     * @param size 每页大小
+     * @param pageNum 页码
+     * @param pageSize 每页大小
      * @param dictTypeId 字典类型ID（可选）
      * @param dictTypeCode 字典类型编码（可选）
      * @param label 字典标签（可选）
@@ -147,15 +145,14 @@ public class DictController {
      */
     @GetMapping("/item/page")
     @RequiresPermission("system:dict:list")
-    public ResponseResult<IPage<DictItemVO>> pageDictItem(
-            @RequestParam(defaultValue = "1") long page,
-            @RequestParam(defaultValue = "10") long size,
+    public ResponseResult<PageInfo<DictItemVO>> pageDictItem(
+            @RequestParam(defaultValue = "1") int pageNum,
+            @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String dictTypeId,
             @RequestParam(required = false) String dictTypeCode,
             @RequestParam(required = false) String label,
             @RequestParam(required = false) Integer status) {
-        Page<DictItemVO> pagination = new Page<>(page, size);
-        IPage<DictItemVO> result = dictService.pageDictItem(pagination, dictTypeId, dictTypeCode, label, status);
+        PageInfo<DictItemVO> result = dictService.pageDictItem(pageNum, pageSize, dictTypeId, dictTypeCode, label, status);
         return ResponseResult.success(result);
     }
 

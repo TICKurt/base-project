@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.mapper.SysRoleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.auth.domain.entity.SysRole">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="role_type" property="roleType"/>
+        <result column="data_scope" property="dataScope"/>
+        <result column="status" property="status"/>
+        <result column="sort" property="sort"/>
+        <result column="is_built_in" property="isBuiltIn"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+    
+    <!-- 角色信息映射结果 -->
+    <resultMap id="RoleVOResultMap" type="com.example.auth.domain.vo.RoleVO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="code" property="code"/>
+        <result column="role_type" property="roleType"/>
+        <result column="role_type_name" property="roleTypeName"/>
+        <result column="data_scope" property="dataScope"/>
+        <result column="data_scope_name" property="dataScopeName"/>
+        <result column="status" property="status"/>
+        <result column="status_name" property="statusName"/>
+        <result column="sort" property="sort"/>
+        <result column="is_built_in" property="isBuiltIn"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+        <result column="user_count" property="userCount"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, code, role_type, data_scope, status, sort, is_built_in, tenant_id,
+        create_by, create_time, update_by, update_time, is_deleted, remark
+    </sql>
+    
+    <!-- 角色信息查询结果列 -->
+    <sql id="Role_VO_Column_List">
+        r.id, r.name, r.code, r.role_type,
+        CASE r.role_type 
+            WHEN 1 THEN '系统角色' 
+            WHEN 2 THEN '业务角色' 
+            ELSE '未知'
+        END AS role_type_name,
+        r.data_scope,
+        CASE r.data_scope 
+            WHEN 1 THEN '全部数据' 
+            WHEN 2 THEN '本部门及以下' 
+            WHEN 3 THEN '本部门' 
+            WHEN 4 THEN '仅本人' 
+            WHEN 5 THEN '自定义' 
+            ELSE '未知'
+        END AS data_scope_name,
+        r.status,
+        CASE r.status 
+            WHEN 0 THEN '禁用' 
+            WHEN 1 THEN '正常' 
+            ELSE '未知'
+        END AS status_name,
+        r.sort, r.is_built_in, r.create_time, r.update_time, r.remark
+    </sql>
+    
+    <!-- 根据角色编码查询角色 -->
+    <select id="selectByCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role
+        where code = #{code}
+        and tenant_id = #{tenantId}
+        and is_deleted = 0
+    </select>
+    
+    <!-- 根据角色ID查询角色信息 -->
+    <select id="selectRoleById" resultMap="RoleVOResultMap">
+        SELECT
+        <include refid="Role_VO_Column_List"/>,
+        (SELECT COUNT(1) FROM sys_user_role ur WHERE ur.role_id = r.id) AS user_count
+        FROM sys_role r
+        WHERE r.id = #{roleId} AND r.is_deleted = 0
+    </select>
+    
+    <!-- 分页查询角色列表 -->
+    <select id="selectRolePage" resultMap="RoleVOResultMap">
+        SELECT
+        <include refid="Role_VO_Column_List"/>,
+        (SELECT COUNT(1) FROM sys_user_role ur WHERE ur.role_id = r.id) AS user_count
+        FROM sys_role r
+        <where>
+            r.is_deleted = 0
+            <if test="query != null">
+                <if test="query.name != null and query.name != ''">
+                    AND r.name LIKE CONCAT('%', #{query.name}, '%')
+                </if>
+                <if test="query.code != null and query.code != ''">
+                    AND r.code LIKE CONCAT('%', #{query.code}, '%')
+                </if>
+                <if test="query.roleType != null">
+                    AND r.role_type = #{query.roleType}
+                </if>
+                <if test="query.status != null">
+                    AND r.status = #{query.status}
+                </if>
+                <if test="query.beginTime != null">
+                    AND r.create_time &gt;= #{query.beginTime}
+                </if>
+                <if test="query.endTime != null">
+                    AND r.create_time &lt;= #{query.endTime}
+                </if>
+                <if test="query.tenantId != null and query.tenantId != ''">
+                    AND r.tenant_id = #{query.tenantId}
+                </if>
+                <if test="query.excludeRoleIds != null and query.excludeRoleIds.size() > 0">
+                    AND r.id NOT IN
+                    <foreach collection="query.excludeRoleIds" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
+            </if>
+        </where>
+        ORDER BY r.sort ASC, r.create_time DESC
+    </select>
+    
+    <!-- 根据用户ID查询角色列表 -->
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        select
+        r.*
+        from sys_role r
+        inner join sys_user_role ur on r.id = ur.role_id
+        where ur.user_id = #{userId}
+        and r.tenant_id = #{tenantId}
+        and r.is_deleted = 0
+        and r.status = 1
+        order by r.sort asc
+    </select>
+    
+    <!-- 查询用户角色编码列表 -->
+    <select id="selectRoleCodesByUserId" resultType="java.lang.String">
+        SELECT r.code
+        FROM sys_role r
+        INNER JOIN sys_user_role ur ON r.id = ur.role_id
+        WHERE ur.user_id = #{userId} AND r.is_deleted = 0
+    </select>
+    
+    <!-- 根据角色ID查询菜单ID列表 -->
+    <select id="selectMenuIdsByRoleId" resultType="java.lang.String">
+        SELECT menu_id
+        FROM sys_role_menu
+        WHERE role_id = #{roleId}
+    </select>
+    
+    <!-- 根据角色ID查询组织ID列表 -->
+    <select id="selectOrgIdsByRoleId" resultType="java.lang.String">
+        SELECT org_id
+        FROM sys_role_org
+        WHERE role_id = #{roleId}
+    </select>
+    
+    <!-- 根据角色ID查询关联的用户数量 -->
+    <select id="selectUserCountByRoleId" resultType="java.lang.Long">
+        SELECT COUNT(1)
+        FROM sys_user_role
+        WHERE role_id = #{roleId}
+    </select>
+
+    <!-- 根据角色ID统计用户数量 -->
+    <select id="countUserByRoleId" resultType="java.lang.Long">
+        select count(1)
+        from sys_user_role
+        where role_id = #{roleId}
+    </select>
+
+    <!-- 根据角色ID列表查询权限标识 -->
+    <select id="selectPermissionsByRoleIds" resultType="java.lang.String">
+        select distinct m.permission
+        from sys_menu m
+        inner join sys_role_menu rm on m.id = rm.menu_id
+        where rm.role_id in
+        <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+        and m.type = 2
+        and m.status = 1
+        and m.is_deleted = 0
+    </select>
+
+    <!-- 根据角色ID和权限标识统计数量 -->
+    <select id="countPermissionByRoleId" resultType="java.lang.Integer">
+        select count(1)
+        from sys_menu m
+        inner join sys_role_menu rm on m.id = rm.menu_id
+        where rm.role_id = #{roleId}
+        and m.permission = #{permission}
+        and m.type = 2
+        and m.status = 1
+        and m.is_deleted = 0
+    </select>
+</mapper> 

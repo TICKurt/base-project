@@ -83,7 +83,7 @@ public class TestItemServiceImpl implements TestItemService {
         BeanUtils.copyProperties(dto, testItem);
         
         // 设置创建人
-        testItem.setCreatedBy(loginUser.getUserId().intValue());
+        testItem.setCreatedBy(loginUser.getUserId());
         
         // 插入数据库
         testItemMapper.insert(testItem);
@@ -103,8 +103,8 @@ public class TestItemServiceImpl implements TestItemService {
         
         // 验证是否为创建者或管理员
         LoginUserVO loginUser = authService.getLoginUser();
-        if (!existingItem.getCreatedBy().equals(loginUser.getUserId().intValue()) && 
-                !loginUser.getRoles().contains("admin")) {
+        if (!existingItem.getCreatedBy().equals(loginUser.getUserId()) && 
+                !loginUser.getRoleNames().contains("admin")) {
             throw new RuntimeException("只有创建者或管理员才能修改项目");
         }
         
@@ -129,8 +129,8 @@ public class TestItemServiceImpl implements TestItemService {
         
         // 验证是否为创建者或管理员
         LoginUserVO loginUser = authService.getLoginUser();
-        if (!existingItem.getCreatedBy().equals(loginUser.getUserId().intValue()) && 
-                !loginUser.getRoles().contains("admin")) {
+        if (!existingItem.getCreatedBy().equals(loginUser.getUserId()) && 
+                !loginUser.getRoleNames().contains("admin")) {
             throw new RuntimeException("只有创建者或管理员才能删除项目");
         }
         

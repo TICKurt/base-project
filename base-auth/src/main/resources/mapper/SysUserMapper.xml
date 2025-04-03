@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.mapper.SysUserMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.auth.domain.entity.SysUser">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="nickname" property="nickname"/>
+        <result column="real_name" property="realName"/>
+        <result column="avatar" property="avatar"/>
+        <result column="email" property="email"/>
+        <result column="mobile" property="mobile"/>
+        <result column="gender" property="gender"/>
+        <result column="birth_date" property="birthDate"/>
+        <result column="status" property="status"/>
+        <result column="org_id" property="orgId"/>
+        <result column="position" property="position"/>
+        <result column="work_no" property="workNo"/>
+        <result column="user_type" property="userType"/>
+        <result column="last_login_ip" property="lastLoginIp"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="login_count" property="loginCount"/>
+        <result column="pwd_reset_time" property="pwdResetTime"/>
+        <result column="pwd_expire_time" property="pwdExpireTime"/>
+        <result column="account_non_expired" property="accountNonExpired"/>
+        <result column="account_non_locked" property="accountNonLocked"/>
+        <result column="credentials_non_expired" property="credentialsNonExpired"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_by" property="updateBy"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_deleted" property="isDeleted"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+    
+    <!-- 用户信息映射结果 -->
+    <resultMap id="UserVOResultMap" type="com.example.auth.domain.vo.UserVO">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="nickname" property="nickname"/>
+        <result column="real_name" property="realName"/>
+        <result column="avatar" property="avatar"/>
+        <result column="email" property="email"/>
+        <result column="mobile" property="mobile"/>
+        <result column="gender" property="gender"/>
+        <result column="gender_name" property="genderName"/>
+        <result column="birth_date" property="birthDate"/>
+        <result column="status" property="status"/>
+        <result column="status_name" property="statusName"/>
+        <result column="org_id" property="orgId"/>
+        <result column="org_name" property="orgName"/>
+        <result column="position" property="position"/>
+        <result column="work_no" property="workNo"/>
+        <result column="user_type" property="userType"/>
+        <result column="user_type_name" property="userTypeName"/>
+        <result column="last_login_ip" property="lastLoginIp"/>
+        <result column="last_login_time" property="lastLoginTime"/>
+        <result column="login_count" property="loginCount"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, username, password, nickname, real_name, avatar, email, mobile, gender, birth_date, 
+        status, org_id, position, work_no, user_type, last_login_ip, last_login_time, login_count, 
+        pwd_reset_time, pwd_expire_time, account_non_expired, account_non_locked, credentials_non_expired, 
+        create_by, create_time, update_by, update_time, is_deleted, tenant_id, remark
+    </sql>
+    
+    <!-- 用户信息查询结果列 -->
+    <sql id="User_VO_Column_List">
+        u.id, u.username, u.nickname, u.real_name, u.avatar, u.email, u.mobile, u.gender,
+        CASE u.gender 
+            WHEN 0 THEN '未知' 
+            WHEN 1 THEN '男' 
+            WHEN 2 THEN '女' 
+            ELSE '未知'
+        END AS gender_name,
+        u.birth_date, u.status,
+        CASE u.status 
+            WHEN 0 THEN '禁用' 
+            WHEN 1 THEN '正常' 
+            WHEN 2 THEN '锁定' 
+            ELSE '未知'
+        END AS status_name,
+        u.org_id, o.name AS org_name, u.position, u.work_no, u.user_type,
+        CASE u.user_type 
+            WHEN 0 THEN '超级管理员' 
+            WHEN 1 THEN '管理员' 
+            WHEN 2 THEN '普通用户' 
+            ELSE '未知'
+        END AS user_type_name,
+        u.last_login_ip, u.last_login_time, u.login_count,
+        u.create_time, u.update_time, u.remark
+    </sql>
+    
+    <!-- 根据用户名查询用户 -->
+    <select id="selectByUsername" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user
+        WHERE username = #{username} AND is_deleted = 0
+    </select>
+    
+    <!-- 根据手机号查询用户 -->
+    <select id="selectByMobile" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user
+        WHERE mobile = #{mobile} AND is_deleted = 0
+    </select>
+    
+    <!-- 根据邮箱查询用户 -->
+    <select id="selectByEmail" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user
+        WHERE email = #{email} AND is_deleted = 0
+    </select>
+    
+    <!-- 根据用户ID查询用户信息 -->
+    <select id="selectUserById" resultMap="UserVOResultMap">
+        SELECT
+        <include refid="User_VO_Column_List"/>
+        FROM sys_user u
+        LEFT JOIN sys_organization o ON u.org_id = o.id
+        WHERE u.id = #{userId} AND u.is_deleted = 0
+    </select>
+    
+    <!-- 分页查询用户列表 -->
+    <select id="selectUserPage" resultMap="UserVOResultMap">
+        SELECT
+        <include refid="User_VO_Column_List"/>
+        FROM sys_user u
+        LEFT JOIN sys_organization o ON u.org_id = o.id
+        <where>
+            u.is_deleted = 0
+            <if test="query != null">
+                <if test="query.username != null and query.username != ''">
+                    AND u.username LIKE CONCAT('%', #{query.username}, '%')
+                </if>
+                <if test="query.realName != null and query.realName != ''">
+                    AND u.real_name LIKE CONCAT('%', #{query.realName}, '%')
+                </if>
+                <if test="query.mobile != null and query.mobile != ''">
+                    AND u.mobile LIKE CONCAT('%', #{query.mobile}, '%')
+                </if>
+                <if test="query.email != null and query.email != ''">
+                    AND u.email LIKE CONCAT('%', #{query.email}, '%')
+                </if>
+                <if test="query.status != null">
+                    AND u.status = #{query.status}
+                </if>
+                <if test="query.userType != null">
+                    AND u.user_type = #{query.userType}
+                </if>
+                <if test="query.orgId != null and query.orgId != ''">
+                    <choose>
+                        <when test="query.includeChildOrg != null and query.includeChildOrg">
+                            AND (u.org_id = #{query.orgId} OR o.path LIKE CONCAT('%/', #{query.orgId}, '/%'))
+                        </when>
+                        <otherwise>
+                            AND u.org_id = #{query.orgId}
+                        </otherwise>
+                    </choose>
+                </if>
+                <if test="query.roleId != null and query.roleId != ''">
+                    AND EXISTS (
+                        SELECT 1 FROM sys_user_role ur 
+                        WHERE ur.user_id = u.id AND ur.role_id = #{query.roleId}
+                    )
+                </if>
+                <if test="query.beginTime != null">
+                    AND u.create_time &gt;= #{query.beginTime}
+                </if>
+                <if test="query.endTime != null">
+                    AND u.create_time &lt;= #{query.endTime}
+                </if>
+                <if test="query.tenantId != null and query.tenantId != ''">
+                    AND u.tenant_id = #{query.tenantId}
+                </if>
+                <if test="query.excludeUserIds != null and query.excludeUserIds.size() > 0">
+                    AND u.id NOT IN
+                    <foreach collection="query.excludeUserIds" item="id" open="(" separator="," close=")">
+                        #{id}
+                    </foreach>
+                </if>
+            </if>
+        </where>
+        ORDER BY u.create_time DESC
+    </select>
+    
+    <!-- 根据组织ID查询用户列表 -->
+    <select id="selectUsersByOrgId" resultMap="UserVOResultMap">
+        SELECT
+        <include refid="User_VO_Column_List"/>
+        FROM sys_user u
+        LEFT JOIN sys_organization o ON u.org_id = o.id
+        <where>
+            u.is_deleted = 0
+            <choose>
+                <when test="includeChildOrg != null and includeChildOrg">
+                    AND (u.org_id = #{orgId} OR o.path LIKE CONCAT('%/', #{orgId}, '/%'))
+                </when>
+                <otherwise>
+                    AND u.org_id = #{orgId}
+                </otherwise>
+            </choose>
+        </where>
+        ORDER BY u.create_time DESC
+    </select>
+    
+    <!-- 根据角色ID查询用户列表 -->
+    <select id="selectUsersByRoleId" resultMap="UserVOResultMap">
+        SELECT
+        <include refid="User_VO_Column_List"/>
+        FROM sys_user u
+        LEFT JOIN sys_organization o ON u.org_id = o.id
+        LEFT JOIN sys_user_role ur ON u.id = ur.user_id
+        WHERE u.is_deleted = 0 
+        AND ur.role_id = #{roleId}
+        ORDER BY u.create_time DESC
+    </select>
+    
+    <!-- 获取用户的角色ID列表 -->
+    <select id="selectUserRoleIds" resultType="java.lang.String">
+        SELECT role_id
+        FROM sys_user_role
+        WHERE user_id = #{userId}
+    </select>
+</mapper> 

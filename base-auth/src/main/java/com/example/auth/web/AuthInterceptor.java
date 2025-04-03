@@ -198,7 +198,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         
-        ResponseResult<Void> result = ResponseResult.fail(HttpStatus.UNAUTHORIZED.value(), message);
+        ResponseResult<Void> result = ResponseResult.error(HttpStatus.UNAUTHORIZED.value(), message);
         PrintWriter writer = response.getWriter();
         writer.write(objectMapper.writeValueAsString(result));
         writer.flush();
@@ -216,7 +216,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         
-        ResponseResult<Void> result = ResponseResult.fail(HttpStatus.FORBIDDEN.value(), message);
+        ResponseResult<Void> result = ResponseResult.error(HttpStatus.FORBIDDEN.value(), message);
         PrintWriter writer = response.getWriter();
         writer.write(objectMapper.writeValueAsString(result));
         writer.flush();

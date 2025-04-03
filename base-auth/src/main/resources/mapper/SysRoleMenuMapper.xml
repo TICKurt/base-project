@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.auth.mapper.SysRoleMenuMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.auth.entity.SysRoleMenu">
+        <id column="role_id" property="roleId"/>
+        <id column="menu_id" property="menuId"/>
+    </resultMap>
+
+    <!-- 根据角色ID查询菜单ID列表 -->
+    <select id="selectMenuIdsByRoleId" parameterType="String" resultType="String">
+        SELECT
+            menu_id
+        FROM
+            sys_role_menu
+        WHERE
+            role_id = #{roleId}
+    </select>
+
+    <!-- 统计菜单被角色引用的次数 -->
+    <select id="countRoleMenuByMenuId" resultType="Integer">
+        SELECT
+            COUNT(1)
+        FROM
+            sys_role_menu
+        WHERE
+            menu_id = #{menuId}
+    </select>
+
+    <!-- 根据角色ID列表查询菜单权限标识 -->
+    <select id="selectPermissionsByRoleIds" resultType="String">
+        SELECT DISTINCT
+            m.perms
+        FROM
+            sys_menu m
+            INNER JOIN sys_role_menu rm ON m.id = rm.menu_id
+        WHERE
+            rm.role_id IN
+            <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+                #{roleId}
+            </foreach>
+            AND m.status = 1
+            AND m.perms IS NOT NULL
+            AND m.perms != ''
+    </select>
+
+    <!-- 批量插入角色菜单关联 -->
+    <insert id="batchInsertList">
+        INSERT INTO sys_role_menu (role_id, menu_id) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.roleId}, #{item.menuId})
+        </foreach>
+    </insert>
+    
+    <!-- 批量插入角色菜单关联（带角色ID和菜单ID列表） -->
+    <insert id="batchInsert">
+        INSERT INTO sys_role_menu (id, role_id, menu_id, create_by, create_time, tenant_id) VALUES
+        <foreach collection="menuIds" item="menuId" separator=",">
+            (REPLACE(UUID(), '-', ''), #{roleId}, #{menuId}, #{createBy}, NOW(), #{tenantId})
+        </foreach>
+    </insert>
+
+    <!-- 根据角色ID删除角色菜单关联 -->
+    <delete id="deleteByRoleId">
+        DELETE FROM
+            sys_role_menu
+        WHERE
+            role_id = #{roleId}
+    </delete>
+
+    <!-- 根据菜单ID删除角色菜单关联 -->
+    <delete id="deleteByMenuId">
+        DELETE FROM
+            sys_role_menu
+        WHERE
+            menu_id = #{menuId}
+    </delete>
+
+    <!-- 根据角色ID和菜单ID删除角色菜单关联 -->
+    <delete id="deleteByRoleIdAndMenuId">
+        DELETE FROM
+            sys_role_menu
+        WHERE
+            role_id = #{roleId}
+            AND menu_id = #{menuId}
+    </delete>
+
+    <!-- 根据角色ID列表批量删除角色菜单关联 -->
+    <delete id="deleteByRoleIds">
+        DELETE FROM
+            sys_role_menu
+        WHERE
+            role_id IN
+            <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+                #{roleId}
+            </foreach>
+    </delete>
+
+    <!-- 获取角色已分配的菜单详情 -->
+    <select id="selectMenusByRoleId" resultType="com.example.auth.entity.SysMenu">
+        SELECT
+            m.id, m.parent_id, m.name, m.path, m.component, m.perms, m.menu_type,
+            m.icon, m.visible, m.status, m.level, m.tree_path, m.keep_alive,
+            m.always_show, m.create_by, m.create_time, m.update_by, m.update_time, m.remark
+        FROM
+            sys_menu m
+            INNER JOIN sys_role_menu rm ON m.id = rm.menu_id
+        WHERE
+            rm.role_id = #{roleId}
+            AND m.status = 1
+        ORDER BY
+            m.parent_id
+    </select>
+</mapper> 

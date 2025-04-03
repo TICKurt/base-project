@@ -36,7 +36,7 @@ public class TestItem implements Serializable {
     /**
      * 创建人ID
      */
-    private Integer createdBy;
+    private String createdBy;
 
     /**
      * 创建时间

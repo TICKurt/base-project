@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
         log.warn("未认证异常: {}", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
-                .body(ResponseResult.fail(401, e.getMessage()));
+                .body(ResponseResult.error(401, e.getMessage()));
     }
     
     /**
@@ -46,6 +46,6 @@ public class GlobalExceptionHandler {
         log.warn("未授权异常: {}", e.getMessage());
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
-                .body(ResponseResult.fail(403, e.getMessage()));
+                .body(ResponseResult.error(403, e.getMessage()));
     }
 } 

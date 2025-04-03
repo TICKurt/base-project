@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.example"})
-//@MapperScan({"com.example.*.infrastructure.mapper"})
+@MapperScan({"com.example.auth.mapper"})
 @EnableTransactionManagement
 public class BaseApplication {
 

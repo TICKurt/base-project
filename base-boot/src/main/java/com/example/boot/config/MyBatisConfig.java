@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @author example
  */
 @Configuration
-@MapperScan({"com.example.business.mapper", "com.example.common.mapper"})
+@MapperScan({"com.example.business.mapper", "com.example.common.mapper", "com.example.auth.mapper"})
 public class MyBatisConfig {
 
     /**

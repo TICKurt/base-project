@@ -1,7 +1,6 @@
 package com.example.common.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageInfo;
 import com.example.common.model.dto.DictItemDTO;
 import com.example.common.model.dto.DictTypeDTO;
 import com.example.common.model.vo.DictItemVO;
@@ -20,13 +19,14 @@ public interface DictService {
     /**
      * 分页查询字典类型
      *
-     * @param page 分页参数
+     * @param pageNum 页码
+     * @param pageSize 每页大小
      * @param name 字典名称（可选）
      * @param code 字典编码（可选）
      * @param status 状态（可选）
      * @return 分页数据
      */
-    IPage<DictTypeVO> pageDictType(Page<DictTypeVO> page, String name, String code, Integer status);
+    PageInfo<DictTypeVO> pageDictType(int pageNum, int pageSize, String name, String code, Integer status);
 
     /**
      * 根据ID获取字典类型
@@ -79,14 +79,15 @@ public interface DictService {
     /**
      * 分页查询字典项
      *
-     * @param page 分页参数
+     * @param pageNum 页码
+     * @param pageSize 每页大小
      * @param dictTypeId 字典类型ID（可选）
      * @param dictTypeCode 字典类型编码（可选）
      * @param label 字典标签（可选）
      * @param status 状态（可选）
      * @return 分页数据
      */
-    IPage<DictItemVO> pageDictItem(Page<DictItemVO> page, String dictTypeId, String dictTypeCode, String label, Integer status);
+    PageInfo<DictItemVO> pageDictItem(int pageNum, int pageSize, String dictTypeId, String dictTypeCode, String label, Integer status);
 
     /**
      * 根据ID获取字典项

@@ -130,3 +130,4 @@ yarn-error.log*
 .terraform/
 
 /docs/sql/
+.cursor
