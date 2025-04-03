@@ -20,7 +20,6 @@ import com.example.auth.service.impl.JwtTokenServiceImpl;
 import com.example.auth.service.impl.RedisTokenServiceImpl;
 import com.example.auth.web.AuthInterceptor;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -29,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author example
  */
 @Configuration
-@Import({AuthProperties.class, GlobalExceptionHandler.class})
+@Import({AuthProperties.class, GlobalExceptionHandler.class, AuthWebMvcConfig.class})
 @ConditionalOnProperty(prefix = "auth", name = "enabled", havingValue = "true", matchIfMissing = true)
 @Slf4j
 public class AuthAutoConfiguration {
@@ -138,16 +137,5 @@ public class AuthAutoConfiguration {
     @Bean
     public AuthInterceptor authInterceptor(AuthService authService) {
         return new AuthInterceptor(authService, authProperties);
-    }
-
-    /**
-     * Web配置
-     *
-     * @param authInterceptor 认证拦截器
-     * @return Web配置
-     */
-    @Bean
-    public WebMvcConfig webMvcConfig(AuthInterceptor authInterceptor) {
-        return new WebMvcConfig(authInterceptor, authProperties);
     }
 }

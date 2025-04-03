@@ -5,10 +5,8 @@ import java.io.Serializable;
 import lombok.Data;
 
 /**
- * 统一响应结果封装类
+ * 统一响应结果包装类
  *
- * @author example
- * @date 2023-04-01
  * @param <T> 数据类型
  */
 @Data
@@ -22,7 +20,7 @@ public class ResponseResult<T> implements Serializable {
     private Integer code;
 
     /**
-     * 返回消息
+     * 返回信息
      */
     private String message;
 
@@ -31,133 +29,66 @@ public class ResponseResult<T> implements Serializable {
      */
     private T data;
 
-    /**
-     * 成功标记
-     */
-    private boolean success;
-
-    /**
-     * 构造方法私有化，禁止直接创建
-     */
-    private ResponseResult() {
-    }
-
-    /**
-     * 构造器
-     *
-     * @param code    状态码
-     * @param message 消息
-     * @param data    数据
-     * @param success 成功标记
-     */
-    private ResponseResult(Integer code, String message, T data, boolean success) {
+    private ResponseResult(Integer code, String message, T data) {
         this.code = code;
         this.message = message;
         this.data = data;
-        this.success = success;
     }
 
     /**
-     * 成功返回（无数据）
+     * 成功返回结果
      *
      * @param <T> 数据类型
-     * @return 响应结果
+     * @return 成功结果
      */
     public static <T> ResponseResult<T> success() {
-        return new ResponseResult<>(200, "操作成功", null, true);
+        return new ResponseResult<>(200, "操作成功", null);
     }
 
     /**
-     * 成功返回（带消息）
-     *
-     * @param message 消息
-     * @param <T>     数据类型
-     * @return 响应结果
-     */
-    public static <T> ResponseResult<T> success(String message) {
-        return new ResponseResult<>(200, message, null, true);
-    }
-
-    /**
-     * 成功返回（带数据）
+     * 成功返回结果
      *
      * @param data 数据
      * @param <T>  数据类型
-     * @return 响应结果
+     * @return 成功结果
      */
     public static <T> ResponseResult<T> success(T data) {
-        return new ResponseResult<>(200, "操作成功", data, true);
+        return new ResponseResult<>(200, "操作成功", data);
     }
 
     /**
-     * 成功返回（带数据和消息）
+     * 成功返回结果
      *
-     * @param data    数据
-     * @param message 消息
-     * @param <T>     数据类型
-     * @return 响应结果
-     */
-    public static <T> ResponseResult<T> success(T data, String message) {
-        return new ResponseResult<>(200, message, data, true);
-    }
-
-    /**
-     * 成功返回（自定义状态码、消息和数据）
-     *
-     * @param code    状态码
-     * @param message 消息
+     * @param message 提示信息
      * @param data    数据
      * @param <T>     数据类型
-     * @return 响应结果
+     * @return 成功结果
      */
-    public static <T> ResponseResult<T> success(Integer code, String message, T data) {
-        return new ResponseResult<>(code, message, data, true);
+    public static <T> ResponseResult<T> success(String message, T data) {
+        return new ResponseResult<>(200, message, data);
     }
 
     /**
-     * 失败返回（无数据）
-     *
-     * @param <T> 数据类型
-     * @return 响应结果
-     */
-    public static <T> ResponseResult<T> error() {
-        return new ResponseResult<>(500, "操作失败", null, false);
-    }
-
-    /**
-     * 失败返回（带消息）
-     *
-     * @param message 消息
-     * @param <T>     数据类型
-     * @return 响应结果
-     */
-    public static <T> ResponseResult<T> error(String message) {
-        return new ResponseResult<>(500, message, null, false);
-    }
-
-    /**
-     * 失败返回（带状态码和消息）
+     * 失败返回结果
      *
      * @param code    状态码
-     * @param message 消息
+     * @param message 错误信息
      * @param <T>     数据类型
-     * @return 响应结果
+     * @return 失败结果
      */
     public static <T> ResponseResult<T> error(Integer code, String message) {
-        return new ResponseResult<>(code, message, null, false);
+        return new ResponseResult<>(code, message, null);
     }
 
     /**
-     * 失败返回（带状态码、消息和数据）
+     * 失败返回结果
      *
-     * @param code    状态码
-     * @param message 消息
-     * @param data    数据
+     * @param message 错误信息
      * @param <T>     数据类型
-     * @return 响应结果
+     * @return 失败结果
      */
-    public static <T> ResponseResult<T> error(Integer code, String message, T data) {
-        return new ResponseResult<>(code, message, data, false);
+    public static <T> ResponseResult<T> error(String message) {
+        return new ResponseResult<>(500, message, null);
     }
 
     /**
@@ -166,6 +97,6 @@ public class ResponseResult<T> implements Serializable {
      * @return 是否成功
      */
     public boolean isSuccess() {
-        return this.success;
+        return this.code == 200;
     }
 } 

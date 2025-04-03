@@ -108,7 +108,7 @@ public class SysUserController {
      */
     @PutMapping
     @RequiresPermission("system:user:edit")
-    public ResponseResult<Void> updateUser(@Valid @RequestBody UserDTO userDTO) {
+    public ResponseResult<String> updateUser(@Valid @RequestBody UserDTO userDTO) {
         // 校验用户ID
         if (userDTO.getId() == null || userDTO.getId().isEmpty()) {
             return ResponseResult.error("用户ID不能为空");
@@ -134,7 +134,7 @@ public class SysUserController {
      */
     @DeleteMapping("/{userId}")
     @RequiresPermission("system:user:remove")
-    public ResponseResult<Void> deleteUser(@PathVariable String userId) {
+    public ResponseResult<String> deleteUser(@PathVariable String userId) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
@@ -155,7 +155,7 @@ public class SysUserController {
      */
     @DeleteMapping("/batch")
     @RequiresPermission("system:user:remove")
-    public ResponseResult<Void> batchDeleteUsers(@RequestBody List<String> userIds) {
+    public ResponseResult<String> batchDeleteUsers(@RequestBody List<String> userIds) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
@@ -179,7 +179,7 @@ public class SysUserController {
      */
     @PutMapping("/{userId}/password")
     @RequiresPermission("system:user:resetPwd")
-    public ResponseResult<Void> resetPassword(
+    public ResponseResult<String> resetPassword(
             @PathVariable String userId,
             @RequestParam String newPassword) {
         // 获取当前登录用户
@@ -198,7 +198,7 @@ public class SysUserController {
      */
     @PutMapping("/{userId}/status")
     @RequiresPermission("system:user:edit")
-    public ResponseResult<Void> updateStatus(
+    public ResponseResult<String> updateStatus(
             @PathVariable String userId,
             @RequestParam Integer status) {
         // 获取当前登录用户
@@ -240,7 +240,7 @@ public class SysUserController {
      */
     @PutMapping("/{userId}/roles")
     @RequiresPermission("system:user:edit")
-    public ResponseResult<Void> assignRoles(
+    public ResponseResult<String> assignRoles(
             @PathVariable String userId,
             @RequestBody List<String> roleIds) {
         // 获取当前登录用户

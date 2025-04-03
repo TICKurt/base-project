@@ -47,7 +47,7 @@ public class UserDemoController {
     @GetMapping("/login")
     @RequiresLogin
     public ResponseResult<LoginUserVO> needLogin() {
-        return ResponseResult.success(authService.getLoginUser(), "登录访问成功");
+        return ResponseResult.success("登录访问成功",authService.getLoginUser());
     }
 
     /**

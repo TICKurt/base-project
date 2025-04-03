@@ -97,7 +97,7 @@ public class SysRoleController {
      */
     @PutMapping
     @RequiresPermission("system:role:edit")
-    public ResponseResult<Void> updateRole(@Valid @RequestBody RoleDTO roleDTO) {
+    public ResponseResult<String> updateRole(@Valid @RequestBody RoleDTO roleDTO) {
         // 校验角色ID
         if (roleDTO.getId() == null || roleDTO.getId().isEmpty()) {
             return ResponseResult.error("角色ID不能为空");
@@ -123,7 +123,7 @@ public class SysRoleController {
      */
     @DeleteMapping("/{roleId}")
     @RequiresPermission("system:role:remove")
-    public ResponseResult<Void> deleteRole(@PathVariable String roleId) {
+    public ResponseResult<String> deleteRole(@PathVariable String roleId) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
@@ -143,7 +143,7 @@ public class SysRoleController {
      */
     @DeleteMapping("/batch")
     @RequiresPermission("system:role:remove")
-    public ResponseResult<Void> batchDeleteRoles(@RequestBody List<String> roleIds) {
+    public ResponseResult<String> batchDeleteRoles(@RequestBody List<String> roleIds) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
@@ -164,7 +164,7 @@ public class SysRoleController {
      */
     @PutMapping("/{roleId}/status")
     @RequiresPermission("system:role:edit")
-    public ResponseResult<Void> updateStatus(
+    public ResponseResult<String> updateStatus(
             @PathVariable String roleId,
             @RequestParam Integer status) {
         // 获取当前登录用户
@@ -192,7 +192,7 @@ public class SysRoleController {
      */
     @PutMapping("/{roleId}/menus")
     @RequiresPermission("system:role:edit")
-    public ResponseResult<Void> assignMenus(
+    public ResponseResult<String> assignMenus(
             @PathVariable String roleId,
             @RequestBody List<String> menuIds) {
         // 获取当前登录用户
@@ -225,7 +225,7 @@ public class SysRoleController {
      */
     @PutMapping("/{roleId}/dataScope")
     @RequiresPermission("system:role:edit")
-    public ResponseResult<Void> assignDataScope(
+    public ResponseResult<String> assignDataScope(
             @PathVariable String roleId,
             @RequestParam Integer dataScope,
             @RequestBody(required = false) List<String> orgIds) {
