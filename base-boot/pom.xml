@@ -32,6 +32,11 @@
             <groupId>com.example</groupId>
             <artifactId>base-business</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>base-workflow</artifactId>
+        </dependency>
+
 
         <!-- Spring Boot 依赖 -->
         <dependency>

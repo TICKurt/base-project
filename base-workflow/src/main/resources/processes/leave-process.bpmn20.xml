@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:flowable="http://flowable.org/bpmn"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             expressionLanguage="http://www.w3.org/1999/XPath"
+             targetNamespace="http://www.flowable.org/processdef">
+
+    <process id="leaveProcess" name="请假流程" isExecutable="true">
+        <documentation>员工请假流程</documentation>
+        
+        <startEvent id="startEvent" name="开始"/>
+        
+        <userTask id="submitForm" name="填写请假单" flowable:assignee="${initiator}">
+            <documentation>填写请假单，包括请假类型、开始时间、结束时间、请假事由等</documentation>
+        </userTask>
+        
+        <userTask id="deptLeaderAudit" name="部门领导审批" flowable:candidateGroups="deptLeader">
+            <documentation>部门领导审批</documentation>
+        </userTask>
+        
+        <userTask id="hrAudit" name="人事审批" flowable:candidateGroups="hr">
+            <documentation>人事审批</documentation>
+        </userTask>
+        
+        <endEvent id="endEvent" name="结束"/>
+        
+        <sequenceFlow id="flow1" sourceRef="startEvent" targetRef="submitForm"/>
+        <sequenceFlow id="flow2" sourceRef="submitForm" targetRef="deptLeaderAudit"/>
+        <sequenceFlow id="flow3" sourceRef="deptLeaderAudit" targetRef="hrAudit"/>
+        <sequenceFlow id="flow4" sourceRef="hrAudit" targetRef="endEvent"/>
+    </process>
+
+</definitions> 
