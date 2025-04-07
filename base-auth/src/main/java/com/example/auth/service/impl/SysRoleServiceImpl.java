@@ -119,17 +119,17 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 
         // 保存角色
         save(role);
-
+        
         // 处理菜单权限
         if (CollectionUtils.isNotEmpty(roleDTO.getMenuIds())) {
             assignMenus(role.getId(), roleDTO.getMenuIds(), createBy);
         }
-
+        
         // 处理数据权限
         if (roleDTO.getDataScope() != null) {
             assignDataScope(role.getId(), roleDTO.getDataScope(), roleDTO.getOrgIds(), createBy);
         }
-
+        
         return role.getId();
     }
 
@@ -146,18 +146,18 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         if (!checkRoleValid(roleDTO)) {
             throw new BusinessException("角色数据不合法");
         }
-
+        
         // 更新角色信息
         SysRole role = BeanUtil.copyProperties(roleDTO, SysRole.class);
         role.setUpdateBy(updateBy);
         role.setUpdateTime(new Date());
         updateById(role);
-
+        
         // 更新菜单权限
         if (CollectionUtils.isNotEmpty(roleDTO.getMenuIds())) {
             assignMenus(role.getId(), roleDTO.getMenuIds(), updateBy);
         }
-
+        
         // 更新数据权限
         if (roleDTO.getDataScope() != null) {
             assignDataScope(role.getId(), roleDTO.getDataScope(), roleDTO.getOrgIds(), updateBy);
@@ -187,13 +187,13 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 
         // 删除角色
         removeById(roleId);
-
+        
         // 删除角色菜单关联
         roleMenuMapper.deleteByRoleId(roleId);
-
+        
         // 删除角色组织关联
         roleOrgMapper.deleteByRoleId(roleId);
-
+        
         return true;
     }
 
@@ -203,12 +203,12 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         if (CollectionUtils.isEmpty(roleIds)) {
             return false;
         }
-
+        
         // 批量删除角色
         for (String roleId : roleIds) {
-            deleteRole(roleId, operator);
+                deleteRole(roleId, operator);
         }
-
+        
         return true;
     }
 
@@ -266,7 +266,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         if (count(codeWrapper) > 0) {
             throw new BusinessException("角色编码已存在");
         }
-
+        
         return true;
     }
 
@@ -275,7 +275,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     public boolean assignMenus(String roleId, List<String> menuIds, String operator) {
         // 删除原有的角色菜单关联
         roleMenuMapper.deleteByRoleId(roleId);
-
+        
         // 批量插入新的角色菜单关联
         if (CollectionUtils.isNotEmpty(menuIds)) {
             roleMenuMapper.batchInsert(roleId, menuIds, operator, getCurrentTenantId());
@@ -295,8 +295,8 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         updateById(role);
 
         // 删除原有的角色组织关联
-        roleOrgMapper.deleteByRoleId(roleId);
-
+            roleOrgMapper.deleteByRoleId(roleId);
+            
         // 如果是自定义数据权限，则保存角色组织关联
         if (dataScope == 5 && CollectionUtils.isNotEmpty(orgIds)) {
             roleOrgMapper.batchInsert(roleId, orgIds, operator, getCurrentTenantId());
@@ -475,4 +475,4 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         return roleMenuMapper.countPermissionByRoleId(roleId, permission) > 0L;
     }
 
-}
+} 
