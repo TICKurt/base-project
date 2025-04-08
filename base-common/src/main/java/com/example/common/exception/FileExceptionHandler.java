@@ -1,5 +1,6 @@
 package com.example.common.exception;
 
+import com.example.core.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +28,8 @@ public class FileExceptionHandler {
      * @return 响应
      */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<Map<String, Object>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
-        log.error("文件上传大小超出限制", e);
-        
-        Map<String, Object> result = new HashMap<>();
-        result.put("success", false);
-        result.put("message", "上传文件大小超过限制");
-        
-        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(result);
+    public Result<Map<String, Object>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        return Result.fail("上传文件大小超过限制");
     }
 
     /**
@@ -44,14 +39,9 @@ public class FileExceptionHandler {
      * @return 响应
      */
     @ExceptionHandler(MultipartException.class)
-    public ResponseEntity<Map<String, Object>> handleMultipartException(MultipartException e) {
+    public Result<Map<String, Object>> handleMultipartException(MultipartException e) {
         log.error("文件上传失败", e);
-        
-        Map<String, Object> result = new HashMap<>();
-        result.put("success", false);
-        result.put("message", "文件上传失败");
-        
-        return ResponseEntity.badRequest().body(result);
+        return Result.fail("文件上传失败" + e.getMessage());
     }
 
     /**
@@ -61,14 +51,9 @@ public class FileExceptionHandler {
      * @return 响应
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(IllegalArgumentException e) {
+    public Result<Map<String, Object>> handleIllegalArgumentException(IllegalArgumentException e) {
         log.error("参数错误", e);
-        
-        Map<String, Object> result = new HashMap<>();
-        result.put("success", false);
-        result.put("message", e.getMessage());
-        
-        return ResponseEntity.badRequest().body(result);
+        return Result.fail("参数错误" + e.getMessage());
     }
 
     /**
@@ -78,13 +63,8 @@ public class FileExceptionHandler {
      * @return 响应
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleException(Exception e) {
+    public Result<Map<String, Object>> handleException(Exception e) {
         log.error("系统异常", e);
-        
-        Map<String, Object> result = new HashMap<>();
-        result.put("success", false);
-        result.put("message", "系统异常，请稍后重试");
-        
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
+        return Result.fail("系统异常" + e.getMessage());
     }
 } 

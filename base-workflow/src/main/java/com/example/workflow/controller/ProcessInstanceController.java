@@ -1,5 +1,6 @@
 package com.example.workflow.controller;
 
+import com.example.core.response.Result;
 import com.example.workflow.model.vo.ProcessInstanceVO;
 import com.example.workflow.service.ProcessInstanceService;
 import lombok.RequiredArgsConstructor;
@@ -34,16 +35,16 @@ public class ProcessInstanceController {
      * @return 流程实例ID
      */
     @PostMapping("/start")
-    public ResponseEntity<String> startProcessInstance(
+    public Result<String> startProcessInstance(
             @RequestParam("processDefinitionId") String processDefinitionId,
             @RequestParam(value = "businessKey", required = false) String businessKey,
             @RequestBody(required = false) Map<String, Object> variables) {
         try {
             String processInstanceId = processInstanceService.startProcessInstance(processDefinitionId, businessKey, variables);
-            return ResponseEntity.ok(processInstanceId);
+            return Result.ok(processInstanceId);
         } catch (Exception e) {
             log.error("启动流程实例失败", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("启动流程实例失败：" + e.getMessage());
+            return Result.fail("启动流程实例失败：" + e.getMessage());
         }
     }
 
@@ -56,16 +57,16 @@ public class ProcessInstanceController {
      * @return 流程实例ID
      */
     @PostMapping("/start-by-key")
-    public ResponseEntity<String> startProcessInstanceByKey(
+    public Result<String> startProcessInstanceByKey(
             @RequestParam("processDefinitionKey") String processDefinitionKey,
             @RequestParam(value = "businessKey", required = false) String businessKey,
             @RequestBody(required = false) Map<String, Object> variables) {
         try {
             String processInstanceId = processInstanceService.startProcessInstanceByKey(processDefinitionKey, businessKey, variables);
-            return ResponseEntity.ok(processInstanceId);
+            return Result.ok(processInstanceId);
         } catch (Exception e) {
             log.error("启动流程实例失败", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("启动流程实例失败：" + e.getMessage());
+            return Result.fail("启动流程实例失败：" + e.getMessage());
         }
     }
 
@@ -80,7 +81,7 @@ public class ProcessInstanceController {
      * @return 流程实例列表
      */
     @GetMapping("/list")
-    public ResponseEntity<List<ProcessInstanceVO>> listProcessInstances(
+    public Result<List<ProcessInstanceVO>> listProcessInstances(
             @RequestParam(value = "processDefinitionKey", required = false) String processDefinitionKey,
             @RequestParam(value = "businessKey", required = false) String businessKey,
             @RequestParam(value = "startUserId", required = false) String startUserId,
@@ -88,10 +89,10 @@ public class ProcessInstanceController {
             @RequestParam(value = "suspended", required = false) Boolean suspended) {
         try {
             List<ProcessInstanceVO> list = processInstanceService.listProcessInstances(processDefinitionKey, businessKey, startUserId, active, suspended);
-            return ResponseEntity.ok(list);
+            return Result.ok(list);
         } catch (Exception e) {
             log.error("查询流程实例列表失败", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return Result.fail(null);
         }
     }
 
@@ -102,17 +103,17 @@ public class ProcessInstanceController {
      * @return 流程实例详情
      */
     @GetMapping("/{processInstanceId}")
-    public ResponseEntity<ProcessInstanceVO> getProcessInstanceById(@PathVariable("processInstanceId") String processInstanceId) {
+    public Result<ProcessInstanceVO> getProcessInstanceById(@PathVariable("processInstanceId") String processInstanceId) {
         try {
             ProcessInstanceVO processInstance = processInstanceService.getProcessInstanceById(processInstanceId);
             if (processInstance != null) {
-                return ResponseEntity.ok(processInstance);
+                return Result.ok(processInstance);
             } else {
-                return ResponseEntity.notFound().build();
+                return  Result.ok(null);
             }
         } catch (Exception e) {
             log.error("获取流程实例详情失败", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return Result.fail(null);
         }
     }
 
@@ -123,13 +124,13 @@ public class ProcessInstanceController {
      * @return 操作结果
      */
     @PutMapping("/{processInstanceId}/suspend")
-    public ResponseEntity<String> suspendProcessInstance(@PathVariable("processInstanceId") String processInstanceId) {
+    public Result<String> suspendProcessInstance(@PathVariable("processInstanceId") String processInstanceId) {
         try {
             processInstanceService.suspendProcessInstance(processInstanceId);
-            return ResponseEntity.ok("挂起成功");
+            return Result.ok("挂起成功");
         } catch (Exception e) {
             log.error("挂起流程实例失败", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("挂起流程实例失败：" + e.getMessage());
+            return Result.fail("挂起流程实例失败：" + e.getMessage());
         }
     }
 
@@ -140,13 +141,13 @@ public class ProcessInstanceController {
      * @return 操作结果
      */
     @PutMapping("/{processInstanceId}/activate")
-    public ResponseEntity<String> activateProcessInstance(@PathVariable("processInstanceId") String processInstanceId) {
+    public Result<String> activateProcessInstance(@PathVariable("processInstanceId") String processInstanceId) {
         try {
             processInstanceService.activateProcessInstance(processInstanceId);
-            return ResponseEntity.ok("激活成功");
+            return Result.ok("激活成功");
         } catch (Exception e) {
             log.error("激活流程实例失败", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("激活流程实例失败：" + e.getMessage());
+            return Result.fail("激活流程实例失败：" + e.getMessage());
         }
     }
 
@@ -158,15 +159,15 @@ public class ProcessInstanceController {
      * @return 操作结果
      */
     @DeleteMapping("/{processInstanceId}")
-    public ResponseEntity<String> deleteProcessInstance(
+    public Result<String> deleteProcessInstance(
             @PathVariable("processInstanceId") String processInstanceId,
             @RequestParam(value = "deleteReason", required = false) String deleteReason) {
         try {
             processInstanceService.deleteProcessInstance(processInstanceId, deleteReason);
-            return ResponseEntity.ok("删除成功");
+            return Result.ok("删除成功");
         } catch (Exception e) {
             log.error("删除流程实例失败", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("删除流程实例失败：" + e.getMessage());
+            return Result.fail("删除流程实例失败：" + e.getMessage());
         }
     }
 
@@ -177,13 +178,13 @@ public class ProcessInstanceController {
      * @return 流程变量
      */
     @GetMapping("/{processInstanceId}/variables")
-    public ResponseEntity<Map<String, Object>> getProcessInstanceVariables(@PathVariable("processInstanceId") String processInstanceId) {
+    public Result<Map<String, Object>> getProcessInstanceVariables(@PathVariable("processInstanceId") String processInstanceId) {
         try {
             Map<String, Object> variables = processInstanceService.getProcessInstanceVariables(processInstanceId);
-            return ResponseEntity.ok(variables);
+            return Result.ok(variables);
         } catch (Exception e) {
             log.error("获取流程变量失败", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return Result.fail(null);
         }
     }
 
@@ -195,15 +196,15 @@ public class ProcessInstanceController {
      * @return 操作结果
      */
     @PostMapping("/{processInstanceId}/variables")
-    public ResponseEntity<String> setProcessInstanceVariables(
+    public Result<String> setProcessInstanceVariables(
             @PathVariable("processInstanceId") String processInstanceId,
             @RequestBody Map<String, Object> variables) {
         try {
             processInstanceService.setProcessInstanceVariables(processInstanceId, variables);
-            return ResponseEntity.ok("设置成功");
+            return Result.ok("设置成功");
         } catch (Exception e) {
             log.error("设置流程变量失败", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("设置流程变量失败：" + e.getMessage());
+            return Result.fail("设置流程变量失败：" + e.getMessage());
         }
     }
 } 

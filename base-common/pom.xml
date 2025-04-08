@@ -15,6 +15,7 @@
     <description>公共模块，存放共享组件、工具类等</description>
     
     <dependencies>
+        <!-- 基础模块依赖 -->
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>base-auth</artifactId>

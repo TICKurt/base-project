@@ -15,24 +15,24 @@
     <description>认证与授权模块，实现用户管理、权限控制</description>
     
     <dependencies>
+        <!-- 核心模块 -->
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>base-core</artifactId>
+        </dependency>
+
         <!-- PageHelper分页插件 -->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>1.4.6</version>
         </dependency>
-        <!-- MyBatis Spring Boot Starter -->
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>2.3.1</version> <!-- 使用适合您项目的版本 -->
-        </dependency>
+        
         <!-- 数据库相关 -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.22</version>
         </dependency>
+        
         <!-- Spring Security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -85,18 +85,10 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.4</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-        </dependency>
-
-        <!-- 核心模块 -->
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>base-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- MyBatis Plus -->

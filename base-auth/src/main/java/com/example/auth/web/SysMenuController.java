@@ -4,6 +4,7 @@ import com.example.auth.dto.SysMenuDTO;
 import com.example.auth.service.SysMenuService;
 import com.example.auth.vo.RouterVO;
 import com.example.auth.vo.SysMenuVO;
+import com.example.core.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,9 +33,9 @@ public class SysMenuController {
      */
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('system:menu:list')")
-    public ResponseEntity<List<SysMenuVO>> list(SysMenuDTO dto) {
+    public Result<List<SysMenuVO>> list(SysMenuDTO dto) {
         List<SysMenuVO> menus = menuService.getMenuList(dto);
-        return ResponseEntity.ok(menus);
+        return Result.ok(menus);
     }
 
     /**
@@ -42,9 +43,9 @@ public class SysMenuController {
      */
     @GetMapping("/tree")
     @PreAuthorize("hasAuthority('system:menu:list')")
-    public ResponseEntity<List<SysMenuVO>> tree(SysMenuDTO dto) {
+    public Result<List<SysMenuVO>> tree(SysMenuDTO dto) {
         List<SysMenuVO> tree = menuService.getMenuTree(dto);
-        return ResponseEntity.ok(tree);
+        return Result.ok(tree);
     }
 
     /**
@@ -52,9 +53,9 @@ public class SysMenuController {
      */
     @GetMapping("/{menuId}")
     @PreAuthorize("hasAuthority('system:menu:query')")
-    public ResponseEntity<SysMenuVO> getInfo(@PathVariable String menuId) {
+    public Result<SysMenuVO> getInfo(@PathVariable String menuId) {
         SysMenuVO menu = menuService.getMenuById(menuId);
-        return ResponseEntity.ok(menu);
+        return Result.ok(menu);
     }
 
     /**
@@ -62,9 +63,9 @@ public class SysMenuController {
      */
     @PostMapping
     @PreAuthorize("hasAuthority('system:menu:add')")
-    public ResponseEntity<Void> add(@Valid @RequestBody SysMenuDTO dto) {
+    public Result<Void> add(@Valid @RequestBody SysMenuDTO dto) {
         menuService.addMenu(dto);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -72,9 +73,9 @@ public class SysMenuController {
      */
     @PutMapping
     @PreAuthorize("hasAuthority('system:menu:edit')")
-    public ResponseEntity<Void> update(@Valid @RequestBody SysMenuDTO dto) {
+    public Result<Void> update(@Valid @RequestBody SysMenuDTO dto) {
         menuService.updateMenu(dto);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -82,18 +83,18 @@ public class SysMenuController {
      */
     @DeleteMapping("/{menuId}")
     @PreAuthorize("hasAuthority('system:menu:remove')")
-    public ResponseEntity<Void> remove(@PathVariable String menuId) {
+    public Result<Void> remove(@PathVariable String menuId) {
         menuService.deleteMenu(menuId);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
      * 获取菜单下拉树列表
      */
     @GetMapping("/treeSelect")
-    public ResponseEntity<List<Map<String, Object>>> treeSelect(SysMenuDTO dto) {
+    public Result<List<Map<String, Object>>> treeSelect(SysMenuDTO dto) {
         List<Map<String, Object>> treeSelect = menuService.getMenuTreeSelect(dto);
-        return ResponseEntity.ok(treeSelect);
+        return Result.ok(treeSelect);
     }
 
     /**
@@ -101,54 +102,54 @@ public class SysMenuController {
      */
     @GetMapping("/roleMenuTreeSelect/{roleId}")
     @PreAuthorize("hasAuthority('system:role:query')")
-    public ResponseEntity<Map<String, Object>> roleMenuTreeSelect(@PathVariable String roleId) {
+    public Result<Map<String, Object>> roleMenuTreeSelect(@PathVariable String roleId) {
         Map<String, Object> roleMenuTree = menuService.getRoleMenuTreeSelect(roleId);
-        return ResponseEntity.ok(roleMenuTree);
+        return Result.ok(roleMenuTree);
     }
 
     /**
      * 获取当前用户的菜单树
      */
     @GetMapping("/userMenuTree")
-    public ResponseEntity<List<SysMenuVO>> getUserMenuTree() {
+    public Result<List<SysMenuVO>> getUserMenuTree() {
         // 这里需要从认证信息中获取当前登录用户的ID
         // 这里简化处理，实际应从SecurityContext中获取
         String userId = "currentUserId";
         List<SysMenuVO> menuTree = menuService.getMenuTreeByUserId(userId);
-        return ResponseEntity.ok(menuTree);
+        return Result.ok(menuTree);
     }
 
     /**
      * 获取当前用户的路由信息
      */
     @GetMapping("/getRouters")
-    public ResponseEntity<List<RouterVO>> getRouters() {
+    public Result<List<RouterVO>> getRouters() {
         // 这里需要从认证信息中获取当前登录用户的ID
         // 这里简化处理，实际应从SecurityContext中获取
         String userId = "currentUserId";
         List<RouterVO> routers = menuService.getRoutersByUserId(userId);
-        return ResponseEntity.ok(routers);
+        return Result.ok(routers);
     }
 
     /**
      * 获取当前用户的权限标识集合
      */
     @GetMapping("/getPermissions")
-    public ResponseEntity<Set<String>> getPermissions() {
+    public Result<Set<String>> getPermissions() {
         // 这里需要从认证信息中获取当前登录用户的ID
         // 这里简化处理，实际应从SecurityContext中获取
         String userId = "currentUserId";
         Set<String> permissions = menuService.getPermissionsByUserId(userId);
-        return ResponseEntity.ok(permissions);
+        return Result.ok(permissions);
     }
 
     /**
      * 检查菜单名称是否唯一
      */
     @GetMapping("/checkMenuNameUnique")
-    public ResponseEntity<Boolean> checkMenuNameUnique(SysMenuDTO dto) {
+    public Result<Boolean> checkMenuNameUnique(SysMenuDTO dto) {
         boolean isUnique = menuService.checkMenuNameUnique(dto);
-        return ResponseEntity.ok(isUnique);
+        return Result.ok(isUnique);
     }
 
     /**
@@ -156,9 +157,9 @@ public class SysMenuController {
      */
     @GetMapping("/buttons")
     @PreAuthorize("hasAuthority('system:menu:list')")
-    public ResponseEntity<List<SysMenuVO>> getButtonPermissions() {
+    public Result<List<SysMenuVO>> getButtonPermissions() {
         List<SysMenuVO> buttons = menuService.getButtonPermissions();
-        return ResponseEntity.ok(buttons);
+        return Result.ok(buttons);
     }
 
     /**
@@ -166,9 +167,9 @@ public class SysMenuController {
      */
     @GetMapping("/parents")
     @PreAuthorize("hasAuthority('system:menu:list')")
-    public ResponseEntity<List<SysMenuVO>> getParentMenus() {
+    public Result<List<SysMenuVO>> getParentMenus() {
         List<SysMenuVO> parents = menuService.getParentMenus();
-        return ResponseEntity.ok(parents);
+        return Result.ok(parents);
     }
 
     /**
@@ -176,8 +177,8 @@ public class SysMenuController {
      */
     @GetMapping("/children/{parentId}")
     @PreAuthorize("hasAuthority('system:menu:list')")
-    public ResponseEntity<List<SysMenuVO>> getChildrenMenus(@PathVariable String parentId) {
+    public Result<List<SysMenuVO>> getChildrenMenus(@PathVariable String parentId) {
         List<SysMenuVO> children = menuService.getChildrenMenus(parentId);
-        return ResponseEntity.ok(children);
+        return Result.ok(children);
     }
 } 

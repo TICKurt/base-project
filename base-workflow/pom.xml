@@ -29,22 +29,18 @@
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-spring-boot-starter</artifactId>
-            <version>${flowable.version}</version>
         </dependency>
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-spring-boot-starter-process</artifactId>
-            <version>${flowable.version}</version>
         </dependency>
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-spring-boot-starter-actuator</artifactId>
-            <version>${flowable.version}</version>
         </dependency>
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-json-converter</artifactId>
-            <version>${flowable.version}</version>
         </dependency>
         
         <!-- Spring Boot -->
@@ -57,6 +53,12 @@
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
         
+        <!-- Spring Test -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+        </dependency>
+        
         <!-- 数据库相关 -->
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -67,7 +69,6 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.22</version>
         </dependency>
         
         <!-- Druid连接池 -->

@@ -1,5 +1,6 @@
 package com.example.auth.handler;
 
+import com.example.core.response.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,11 +29,9 @@ public class GlobalExceptionHandler {
      * @return 统一响应结果
      */
     @ExceptionHandler(NotAuthenticatedException.class)
-    public ResponseEntity<ResponseResult<Void>> handleNotAuthenticatedException(NotAuthenticatedException e) {
+    public Result<ResponseResult<Void>> handleNotAuthenticatedException(NotAuthenticatedException e) {
         log.warn("未认证异常: {}", e.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(ResponseResult.error(401, e.getMessage()));
+        return Result.fail(401, e.getMessage());
     }
     
     /**
@@ -42,10 +41,8 @@ public class GlobalExceptionHandler {
      * @return 统一响应结果
      */
     @ExceptionHandler(NotAuthorizedException.class)
-    public ResponseEntity<ResponseResult<Void>> handleNotAuthorizedException(NotAuthorizedException e) {
+    public Result<ResponseResult<Void>> handleNotAuthorizedException(NotAuthorizedException e) {
         log.warn("未授权异常: {}", e.getMessage());
-        return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(ResponseResult.error(403, e.getMessage()));
+        return Result.fail(403, e.getMessage());
     }
 } 

@@ -1,0 +1,15 @@
+flowable:
+  process:
+    definition-cache-limit: 10
+    create-diagram-on-deploy: true
+    enable-safe-xml: true
+    diagram-font-name: Arial
+    history-level: full
+  font:
+    activity-font-name: Arial
+    label-font-name: Arial
+    annotation-font-name: Arial
+  process-diagram-generator-font:
+    activity-font-name: Arial
+    label-font-name: Arial
+    annotation-font-name: Arial 

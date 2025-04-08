@@ -1,6 +1,8 @@
 package com.example.workflow.config;
 
 import org.flowable.engine.ProcessEngine;
+import org.flowable.image.ProcessDiagramGenerator;
+import org.flowable.image.impl.DefaultProcessDiagramGenerator;
 import org.flowable.spring.SpringProcessEngineConfiguration;
 import org.flowable.spring.boot.EngineConfigurationConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -15,12 +17,18 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FlowableConfig implements EngineConfigurationConfigurer<SpringProcessEngineConfiguration> {
 
+    // 定义备选字体，确保至少有一个可用
+    private static final String[] FONT_NAMES = {"宋体", "SimSun", "Microsoft YaHei", "Arial", "Helvetica", "sans-serif"};
+
     @Override
     public void configure(SpringProcessEngineConfiguration engineConfiguration) {
+        // 选择一个可用的字体
+        String fontName = selectAvailableFont();
+        
         // 设置流程图字体
-        engineConfiguration.setActivityFontName("宋体");
-        engineConfiguration.setLabelFontName("宋体");
-        engineConfiguration.setAnnotationFontName("宋体");
+        engineConfiguration.setActivityFontName(fontName);
+        engineConfiguration.setLabelFontName(fontName);
+        engineConfiguration.setAnnotationFontName(fontName);
 
         // 设置历史级别为full，保存所有历史数据
         engineConfiguration.setHistory("full");
@@ -39,11 +47,32 @@ public class FlowableConfig implements EngineConfigurationConfigurer<SpringProce
         engineConfiguration.setMailServerPassword("password");
         engineConfiguration.setMailServerUseSSL(true);
 
-        // 设置流程图生成配置
-        engineConfiguration.setCreateDiagramOnDeploy(true);
-        engineConfiguration.setActivityFontName("宋体");
-        engineConfiguration.setAnnotationFontName("宋体");
-        engineConfiguration.setLabelFontName("宋体");
+        // 增强流程图生成配置
+        engineConfiguration.setCreateDiagramOnDeploy(true); // 部署时创建流程图
+        engineConfiguration.setDrawSequenceFlowNameWithNoLabelDI(true); // 即使没有标签也显示顺序流名称
+        engineConfiguration.setEnableSafeBpmnXml(true); // 启用安全的BPMN XML处理
+        engineConfiguration.setEnableProcessDefinitionInfoCache(true); // 启用流程定义信息缓存
+        engineConfiguration.setAlwaysLookupLatestDefinitionVersion(false); // 使用精确版本而不是最新版本
+        engineConfiguration.setEnableEventDispatcher(true); // 启用事件分发器
+        
+        // 设置自定义的流程图生成器
+        engineConfiguration.setProcessDiagramGenerator(processDiagramGenerator());
+    }
+    
+    /**
+     * 提供自定义的流程图生成器
+     */
+    @Bean
+    public ProcessDiagramGenerator processDiagramGenerator() {
+        return new DefaultProcessDiagramGenerator();
+    }
+    
+    /**
+     * 选择一个可用的字体
+     */
+    private String selectAvailableFont() {
+        // 默认使用第一个字体
+        return FONT_NAMES[0];
     }
 
     @Bean

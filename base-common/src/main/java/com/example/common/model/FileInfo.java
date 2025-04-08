@@ -61,4 +61,8 @@ public class FileInfo {
      * 存储类型（local, oss, cos等）
      */
     private String storageType;
+
+    public FileInfo(String originalFilename) {
+        this.originalFilename = originalFilename;
+    }
 } 

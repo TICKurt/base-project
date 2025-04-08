@@ -2,6 +2,7 @@ package com.example.auth.web;
 
 import com.example.auth.dto.SysRoleOrgDTO;
 import com.example.auth.service.SysRoleService;
+import com.example.core.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,9 +30,9 @@ public class SysRoleOrgController {
      */
     @GetMapping("/{roleId}")
     @PreAuthorize("hasAuthority('system:role:query')")
-    public ResponseEntity<Map<String, Object>> getRoleDataScope(@PathVariable String roleId) {
+    public Result<Map<String, Object>> getRoleDataScope(@PathVariable String roleId) {
         Map<String, Object> dataScope = roleService.getRoleDataScope(roleId);
-        return ResponseEntity.ok(dataScope);
+        return Result.ok(dataScope);
     }
 
     /**
@@ -39,9 +40,9 @@ public class SysRoleOrgController {
      */
     @PutMapping
     @PreAuthorize("hasAuthority('system:role:edit')")
-    public ResponseEntity<Void> updateRoleDataScope(@Valid @RequestBody SysRoleOrgDTO dto) {
+    public Result<Void> updateRoleDataScope(@Valid @RequestBody SysRoleOrgDTO dto) {
         roleService.updateRoleDataScope(dto);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -49,9 +50,9 @@ public class SysRoleOrgController {
      */
     @GetMapping("/orgs/{roleId}")
     @PreAuthorize("hasAuthority('system:role:query')")
-    public ResponseEntity<List<String>> getRoleOrgs(@PathVariable String roleId) {
+    public Result<List<String>> getRoleOrgs(@PathVariable String roleId) {
         List<String> orgIds = roleService.getRoleOrgIds(roleId);
-        return ResponseEntity.ok(orgIds);
+        return Result.ok(orgIds);
     }
 
     /**
@@ -59,17 +60,17 @@ public class SysRoleOrgController {
      */
     @PostMapping("/assign")
     @PreAuthorize("hasAuthority('system:role:edit')")
-    public ResponseEntity<Void> assignRoleOrgs(@Valid @RequestBody SysRoleOrgDTO dto) {
+    public Result<Void> assignRoleOrgs(@Valid @RequestBody SysRoleOrgDTO dto) {
         roleService.assignRoleOrgs(dto);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
      * 获取用户的数据权限范围
      */
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<String>> getUserDataScope(@PathVariable String userId) {
+    public Result<List<String>> getUserDataScope(@PathVariable String userId) {
         List<String> orgIds = roleService.getUserDataScopeOrgIds(userId);
-        return ResponseEntity.ok(orgIds);
+        return Result.ok(orgIds);
     }
 } 

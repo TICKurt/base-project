@@ -1,11 +1,14 @@
 package com.example.workflow.service.impl;
 
+import com.example.common.model.FileInfo;
+import com.example.common.service.FileService;
 import com.example.workflow.model.dto.BpmnDeployDTO;
 import com.example.workflow.model.dto.ProcessDefinitionDTO;
 import com.example.workflow.model.query.ProcessDefinitionQuery;
 import com.example.workflow.model.vo.ProcessDefinitionVO;
 import com.example.workflow.service.ProcessDefinitionService;
 import com.example.workflow.utils.FlowableUtils;
+import com.example.workflow.utils.FlowableDiagramUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -15,9 +18,12 @@ import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.image.ProcessDiagramGenerator;
+import org.flowable.spring.SpringProcessEngineConfiguration;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,6 +47,9 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
 
     private final RepositoryService repositoryService;
     private final BpmnXMLConverter bpmnXMLConverter = new BpmnXMLConverter();
+    private final FileService fileService;
+    private final SpringProcessEngineConfiguration processEngineConfiguration;
+    private final FlowableDiagramUtil flowableDiagramUtil;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -186,18 +195,58 @@ public class ProcessDefinitionServiceImpl implements ProcessDefinitionService {
     }
 
     @Override
-    public byte[] getProcessDiagram(String processDefinitionId) {
+    public FileInfo getProcessDiagram(String processDefinitionId) {
+        log.info("开始获取流程图, processDefinitionId: {}", processDefinitionId);
         try {
-            // 获取流程图输入流
-            InputStream inputStream = repositoryService.getProcessDiagram(processDefinitionId);
+            // 验证流程定义是否存在
+            ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
+                    .processDefinitionId(processDefinitionId)
+                    .singleResult();
+            
+            if (processDefinition == null) {
+                log.warn("流程定义不存在: {}", processDefinitionId);
+                throw new RuntimeException("未找到流程定义：" + processDefinitionId);
+            }
+            
+            log.info("流程定义信息: key={}, name={}, version={}, resourceName={}",
+                    processDefinition.getKey(), processDefinition.getName(),
+                    processDefinition.getVersion(), processDefinition.getResourceName());
+            
+            // 使用工具类获取流程图
+            InputStream inputStream = flowableDiagramUtil.getProcessDiagramInputStream(processDefinitionId);
+            
             if (inputStream == null) {
+                log.warn("无法获取或生成流程图: {}", processDefinitionId);
                 return null;
             }
-
-            // 转换为字节数组
-            return IOUtils.toByteArray(inputStream);
+            
+            // 构建文件名，格式：process_diagram_[key]_[version].png
+            String filename = "process_diagram_" + processDefinition.getKey() + "_" + processDefinition.getVersion() + ".png";
+            log.info("生成流程图文件名: {}", filename);
+            
+            // 将流程图保存到文件系统
+            log.info("准备保存流程图到目录: workflow/diagrams");
+            try (InputStream is = inputStream) {
+                // 创建MultipartFile
+                MockMultipartFile mockFile = new MockMultipartFile(filename, filename, "image/png", is);
+                log.info("创建MockMultipartFile: name={}, size={}", mockFile.getName(), mockFile.getSize());
+                
+                // 将流程图保存到workflow目录下
+                FileInfo fileInfo = fileService.uploadFile(mockFile, "workflow/diagrams");
+                
+                if (fileInfo == null) {
+                    log.warn("文件保存失败，fileService.uploadFile返回null");
+                    return null;
+                }
+                
+                log.info("流程图保存成功: path={}, url={}", fileInfo.getPath(), fileInfo.getUrl());
+                return fileInfo;
+            } catch (Exception e) {
+                log.error("保存流程图文件过程中发生异常: {}", e.getMessage(), e);
+                return null;
+            }
         } catch (Exception e) {
-            log.error("获取流程图失败", e);
+            log.error("获取流程图失败, processDefinitionId: {}, 异常: {}", processDefinitionId, e.getMessage(), e);
             throw new RuntimeException("获取流程图失败：" + e.getMessage());
         }
     }

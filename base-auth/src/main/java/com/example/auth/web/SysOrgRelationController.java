@@ -4,6 +4,7 @@ import com.example.auth.dto.SysOrgRelationDTO;
 import com.example.auth.entity.SysOrgRelation;
 import com.example.auth.service.SysOrganizationService;
 import com.example.auth.vo.SysOrgRelationVO;
+import com.example.core.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,9 +31,9 @@ public class SysOrgRelationController {
      */
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('system:org:list')")
-    public ResponseEntity<List<SysOrgRelationVO>> list(SysOrgRelationDTO dto) {
+    public Result<List<SysOrgRelationVO>> list(SysOrgRelationDTO dto) {
         List<SysOrgRelationVO> list = organizationService.getOrgRelationList(dto);
-        return ResponseEntity.ok(list);
+        return Result.ok(list);
     }
 
     /**
@@ -40,9 +41,9 @@ public class SysOrgRelationController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('system:org:query')")
-    public ResponseEntity<SysOrgRelationVO> getInfo(@PathVariable String id) {
+    public Result<SysOrgRelationVO> getInfo(@PathVariable String id) {
         SysOrgRelationVO relation = organizationService.getOrgRelationById(id);
-        return ResponseEntity.ok(relation);
+        return Result.ok(relation);
     }
 
     /**
@@ -50,9 +51,9 @@ public class SysOrgRelationController {
      */
     @PostMapping
     @PreAuthorize("hasAuthority('system:org:edit')")
-    public ResponseEntity<Void> add(@Valid @RequestBody SysOrgRelationDTO dto) {
+    public Result<Void> add(@Valid @RequestBody SysOrgRelationDTO dto) {
         organizationService.addOrgRelation(dto);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -60,9 +61,9 @@ public class SysOrgRelationController {
      */
     @PutMapping
     @PreAuthorize("hasAuthority('system:org:edit')")
-    public ResponseEntity<Void> update(@Valid @RequestBody SysOrgRelationDTO dto) {
+    public Result<Void> update(@Valid @RequestBody SysOrgRelationDTO dto) {
         organizationService.updateOrgRelation(dto);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -70,9 +71,9 @@ public class SysOrgRelationController {
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('system:org:remove')")
-    public ResponseEntity<Void> remove(@PathVariable String id) {
+    public Result<Void> remove(@PathVariable String id) {
         organizationService.removeOrgRelation(id);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -80,9 +81,9 @@ public class SysOrgRelationController {
      */
     @GetMapping("/org/{orgId}")
     @PreAuthorize("hasAuthority('system:org:query')")
-    public ResponseEntity<List<SysOrgRelationVO>> getRelationsByOrgId(@PathVariable String orgId) {
+    public Result<List<SysOrgRelationVO>> getRelationsByOrgId(@PathVariable String orgId) {
         List<SysOrgRelationVO> relations = organizationService.getRelationsByOrgId(orgId);
-        return ResponseEntity.ok(relations);
+        return Result.ok(relations);
     }
 
     /**
@@ -90,10 +91,10 @@ public class SysOrgRelationController {
      */
     @GetMapping("/related/{orgId}")
     @PreAuthorize("hasAuthority('system:org:query')")
-    public ResponseEntity<List<SysOrgRelationVO>> getRelatedOrgs(@PathVariable String orgId, 
+    public Result<List<SysOrgRelationVO>> getRelatedOrgs(@PathVariable String orgId, 
                                                                 @RequestParam(required = false) Integer relationType) {
         List<SysOrgRelationVO> relatedOrgs = organizationService.getRelatedOrgs(orgId, relationType);
-        return ResponseEntity.ok(relatedOrgs);
+        return Result.ok(relatedOrgs);
     }
 
     /**
@@ -101,9 +102,9 @@ public class SysOrgRelationController {
      */
     @PostMapping("/batch")
     @PreAuthorize("hasAuthority('system:org:edit')")
-    public ResponseEntity<Void> batchAddRelations(@Valid @RequestBody List<SysOrgRelationDTO> dtos) {
+    public Result<Void> batchAddRelations(@Valid @RequestBody List<SysOrgRelationDTO> dtos) {
         organizationService.batchAddOrgRelations(dtos);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -111,8 +112,8 @@ public class SysOrgRelationController {
      */
     @DeleteMapping("/batch")
     @PreAuthorize("hasAuthority('system:org:remove')")
-    public ResponseEntity<Void> batchRemoveRelations(@RequestBody List<String> ids) {
+    public Result<Void> batchRemoveRelations(@RequestBody List<String> ids) {
         organizationService.batchRemoveOrgRelations(ids);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 } 

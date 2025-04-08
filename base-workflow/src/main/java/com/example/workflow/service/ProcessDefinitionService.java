@@ -1,5 +1,6 @@
 package com.example.workflow.service;
 
+import com.example.common.model.FileInfo;
 import com.example.workflow.model.dto.BpmnDeployDTO;
 import com.example.workflow.model.vo.ProcessDefinitionVO;
 import org.springframework.web.multipart.MultipartFile;
@@ -91,9 +92,9 @@ public interface ProcessDefinitionService {
      * 获取流程图
      *
      * @param processDefinitionId 流程定义ID
-     * @return 流程图字节数组
+     * @return 流程图文件信息
      */
-    byte[] getProcessDiagram(String processDefinitionId);
+    FileInfo getProcessDiagram(String processDefinitionId);
 
     /**
      * 获取流程资源

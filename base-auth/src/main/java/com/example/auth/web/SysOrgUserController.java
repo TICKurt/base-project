@@ -4,6 +4,7 @@ import com.example.auth.domain.dto.UserDTO;
 import com.example.auth.domain.vo.UserVO;
 import com.example.auth.service.SysOrganizationService;
 import com.example.auth.service.SysUserService;
+import com.example.core.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,10 +35,10 @@ public class SysOrgUserController {
      */
     @GetMapping("/list/{orgId}")
     @PreAuthorize("hasAuthority('system:org:list')")
-    public ResponseEntity<List<UserVO>> getOrgUsers(@PathVariable String orgId, UserDTO dto) {
+    public Result<List<UserVO>> getOrgUsers(@PathVariable String orgId, UserDTO dto) {
         dto.setOrgId(orgId);
         List<UserVO> users = userService.getUserListByOrg(dto);
-        return ResponseEntity.ok(users);
+        return Result.ok(users);
     }
 
     /**
@@ -45,9 +46,9 @@ public class SysOrgUserController {
      */
     @GetMapping("/count/{orgId}")
     @PreAuthorize("hasAuthority('system:org:query')")
-    public ResponseEntity<Integer> getOrgUserCount(@PathVariable String orgId) {
+    public Result<Integer> getOrgUserCount(@PathVariable String orgId) {
         Integer count = userService.countUserByOrgId(orgId);
-        return ResponseEntity.ok(count);
+        return Result.ok(count);
     }
 
     /**
@@ -55,12 +56,12 @@ public class SysOrgUserController {
      */
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('system:org:edit')")
-    public ResponseEntity<Void> addUsersToOrg(@Valid @RequestBody Map<String, Object> params) {
+    public Result<Void> addUsersToOrg(@Valid @RequestBody Map<String, Object> params) {
         String orgId = (String) params.get("orgId");
         @SuppressWarnings("unchecked")
         List<String> userIds = (List<String>) params.get("userIds");
         organizationService.addUsersToOrg(orgId, userIds);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -68,12 +69,12 @@ public class SysOrgUserController {
      */
     @PostMapping("/remove")
     @PreAuthorize("hasAuthority('system:org:edit')")
-    public ResponseEntity<Void> removeUsersFromOrg(@Valid @RequestBody Map<String, Object> params) {
+    public Result<Void> removeUsersFromOrg(@Valid @RequestBody Map<String, Object> params) {
         String orgId = (String) params.get("orgId");
         @SuppressWarnings("unchecked")
         List<String> userIds = (List<String>) params.get("userIds");
         organizationService.removeUsersFromOrg(orgId, userIds);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -81,13 +82,13 @@ public class SysOrgUserController {
      */
     @GetMapping("/leader/{orgId}")
     @PreAuthorize("hasAuthority('system:org:query')")
-    public ResponseEntity<UserVO> getOrgLeader(@PathVariable String orgId) {
+    public Result<UserVO> getOrgLeader(@PathVariable String orgId) {
         String leaderId = organizationService.getOrgLeaderId(orgId);
         if (leaderId == null) {
-            return ResponseEntity.ok(null);
+            return Result.ok(null);
         }
         UserVO leader = userService.getUserById(leaderId);
-        return ResponseEntity.ok(leader);
+        return Result.ok(leader);
     }
 
     /**
@@ -95,9 +96,9 @@ public class SysOrgUserController {
      */
     @PutMapping("/leader")
     @PreAuthorize("hasAuthority('system:org:edit')")
-    public ResponseEntity<Void> setOrgLeader(@RequestParam String orgId, @RequestParam String userId) {
+    public Result<Void> setOrgLeader(@RequestParam String orgId, @RequestParam String userId) {
         organizationService.setOrgLeader(orgId, userId);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -105,8 +106,8 @@ public class SysOrgUserController {
      */
     @GetMapping("/unassigned/{orgId}")
     @PreAuthorize("hasAuthority('system:org:list')")
-    public ResponseEntity<List<UserVO>> getUnassignedUsers(@PathVariable String orgId, UserDTO dto) {
+    public Result<List<UserVO>> getUnassignedUsers(@PathVariable String orgId, UserDTO dto) {
         List<UserVO> users = userService.getUnassignedOrgUsers(orgId, dto);
-        return ResponseEntity.ok(users);
+        return Result.ok(users);
     }
 } 

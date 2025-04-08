@@ -4,6 +4,7 @@ import com.example.auth.dto.SysOrganizationDTO;
 import com.example.auth.entity.SysOrganization;
 import com.example.auth.service.SysOrganizationService;
 import com.example.auth.vo.SysOrganizationVO;
+import com.example.core.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,9 +32,9 @@ public class SysOrganizationController {
      */
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('system:org:list')")
-    public ResponseEntity<List<SysOrganizationVO>> list(SysOrganizationDTO dto) {
+    public Result<List<SysOrganizationVO>> list(SysOrganizationDTO dto) {
         List<SysOrganizationVO> list = organizationService.getOrgList(dto);
-        return ResponseEntity.ok(list);
+        return Result.ok(list);
     }
 
     /**
@@ -41,9 +42,9 @@ public class SysOrganizationController {
      */
     @GetMapping("/tree")
     @PreAuthorize("hasAuthority('system:org:list')")
-    public ResponseEntity<List<SysOrganizationVO>> tree(SysOrganizationDTO dto) {
+    public Result<List<SysOrganizationVO>> tree(SysOrganizationDTO dto) {
         List<SysOrganizationVO> tree = organizationService.getOrgTree(dto);
-        return ResponseEntity.ok(tree);
+        return Result.ok(tree);
     }
 
     /**
@@ -51,9 +52,9 @@ public class SysOrganizationController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('system:org:query')")
-    public ResponseEntity<SysOrganizationVO> getInfo(@PathVariable String id) {
+    public Result<SysOrganizationVO> getInfo(@PathVariable String id) {
         SysOrganizationVO org = organizationService.getOrgById(id);
-        return ResponseEntity.ok(org);
+        return Result.ok(org);
     }
 
     /**
@@ -61,9 +62,9 @@ public class SysOrganizationController {
      */
     @PostMapping
     @PreAuthorize("hasAuthority('system:org:add')")
-    public ResponseEntity<Void> add(@Valid @RequestBody SysOrganizationDTO dto) {
+    public Result<Void> add(@Valid @RequestBody SysOrganizationDTO dto) {
         organizationService.addOrg(dto);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -71,9 +72,9 @@ public class SysOrganizationController {
      */
     @PutMapping
     @PreAuthorize("hasAuthority('system:org:edit')")
-    public ResponseEntity<Void> update(@Valid @RequestBody SysOrganizationDTO dto) {
+    public Result<Void> update(@Valid @RequestBody SysOrganizationDTO dto) {
         organizationService.updateOrg(dto);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -81,18 +82,18 @@ public class SysOrganizationController {
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('system:org:remove')")
-    public ResponseEntity<Void> remove(@PathVariable String id) {
+    public Result<Void> remove(@PathVariable String id) {
         organizationService.removeOrg(id);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
      * 获取组织机构下拉树列表
      */
     @GetMapping("/treeSelect")
-    public ResponseEntity<List<Map<String, Object>>> treeSelect(SysOrganizationDTO dto) {
+    public Result<List<Map<String, Object>>> treeSelect(SysOrganizationDTO dto) {
         List<Map<String, Object>> treeSelect = organizationService.getOrgTreeSelect(dto);
-        return ResponseEntity.ok(treeSelect);
+        return Result.ok(treeSelect);
     }
 
     /**
@@ -100,9 +101,9 @@ public class SysOrganizationController {
      */
     @GetMapping("/roleOrgTreeSelect/{roleId}")
     @PreAuthorize("hasAuthority('system:role:query')")
-    public ResponseEntity<Map<String, Object>> roleOrgTreeSelect(@PathVariable String roleId) {
+    public Result<Map<String, Object>> roleOrgTreeSelect(@PathVariable String roleId) {
         Map<String, Object> roleOrgTree = organizationService.getRoleOrgTreeSelect(roleId);
-        return ResponseEntity.ok(roleOrgTree);
+        return Result.ok(roleOrgTree);
     }
 
     /**
@@ -110,27 +111,27 @@ public class SysOrganizationController {
      */
     @GetMapping("/detail/{id}")
     @PreAuthorize("hasAuthority('system:org:query')")
-    public ResponseEntity<Map<String, Object>> getOrgDetail(@PathVariable String id) {
+    public Result<Map<String, Object>> getOrgDetail(@PathVariable String id) {
         Map<String, Object> detail = organizationService.getOrgDetailById(id);
-        return ResponseEntity.ok(detail);
+        return Result.ok(detail);
     }
 
     /**
      * 获取组织机构路径名称
      */
     @GetMapping("/paths")
-    public ResponseEntity<List<String>> getOrgPathNames(@RequestParam String orgId) {
+    public Result<List<String>> getOrgPathNames(@RequestParam String orgId) {
         List<String> pathNames = organizationService.getOrgPathNames(orgId);
-        return ResponseEntity.ok(pathNames);
+        return Result.ok(pathNames);
     }
 
     /**
      * 检查组织编码是否唯一
      */
     @GetMapping("/checkCodeUnique")
-    public ResponseEntity<Boolean> checkCodeUnique(@RequestParam(required = false) String id, @RequestParam String code) {
+    public Result<Boolean> checkCodeUnique(@RequestParam(required = false) String id, @RequestParam String code) {
         boolean isUnique = organizationService.checkOrgCodeUnique(id, code);
-        return ResponseEntity.ok(isUnique);
+        return Result.ok(isUnique);
     }
 
     /**
@@ -138,9 +139,9 @@ public class SysOrganizationController {
      */
     @GetMapping("/children/{parentId}")
     @PreAuthorize("hasAuthority('system:org:list')")
-    public ResponseEntity<List<SysOrganizationVO>> getChildrenOrgs(@PathVariable String parentId) {
+    public Result<List<SysOrganizationVO>> getChildrenOrgs(@PathVariable String parentId) {
         List<SysOrganizationVO> children = organizationService.getChildrenOrgs(parentId);
-        return ResponseEntity.ok(children);
+        return Result.ok(children);
     }
 
     /**
@@ -148,8 +149,8 @@ public class SysOrganizationController {
      */
     @GetMapping("/export")
     @PreAuthorize("hasAuthority('system:org:export')")
-    public ResponseEntity<byte[]> export(SysOrganizationDTO dto) {
+    public Result<byte[]> export(SysOrganizationDTO dto) {
         byte[] data = organizationService.exportOrgData(dto);
-        return ResponseEntity.ok(data);
+        return Result.ok(data);
     }
 } 

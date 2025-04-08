@@ -3,6 +3,7 @@ package com.example.auth.web;
 import com.example.auth.dto.SysOrganizationDTO;
 import com.example.auth.entity.SysOrganizationExt;
 import com.example.auth.service.SysOrganizationService;
+import com.example.core.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,9 +30,9 @@ public class SysOrganizationExtController {
      */
     @GetMapping("/{orgId}")
     @PreAuthorize("hasAuthority('system:org:query')")
-    public ResponseEntity<Map<String, Object>> getInfo(@PathVariable String orgId) {
+    public Result<Map<String, Object>> getInfo(@PathVariable String orgId) {
         Map<String, Object> ext = organizationService.getOrgExtById(orgId);
-        return ResponseEntity.ok(ext);
+        return Result.ok(ext);
     }
 
     /**
@@ -39,9 +40,11 @@ public class SysOrganizationExtController {
      */
     @PostMapping
     @PreAuthorize("hasAuthority('system:org:edit')")
-    public ResponseEntity<Void> saveExt(@Valid @RequestBody SysOrganizationDTO dto) {
+    public Result<Void> saveExt(@Valid @RequestBody SysOrganizationDTO dto) {
+        // 调用organizationService的saveOrgExt方法，保存组织机构扩展信息
         organizationService.saveOrgExt(dto);
-        return ResponseEntity.ok().build();
+        // 返回一个成功的Result对象
+        return Result.ok();
     }
 
     /**
@@ -49,9 +52,9 @@ public class SysOrganizationExtController {
      */
     @PutMapping
     @PreAuthorize("hasAuthority('system:org:edit')")
-    public ResponseEntity<Void> updateExt(@Valid @RequestBody SysOrganizationDTO dto) {
+    public Result<Void> updateExt(@Valid @RequestBody SysOrganizationDTO dto) {
         organizationService.updateOrgExt(dto);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -59,9 +62,9 @@ public class SysOrganizationExtController {
      */
     @DeleteMapping("/{orgId}")
     @PreAuthorize("hasAuthority('system:org:remove')")
-    public ResponseEntity<Void> removeExt(@PathVariable String orgId) {
+    public Result<Void> removeExt(@PathVariable String orgId) {
         organizationService.removeOrgExt(orgId);
-        return ResponseEntity.ok().build();
+        return Result.ok();
     }
 
     /**
@@ -69,9 +72,9 @@ public class SysOrganizationExtController {
      */
     @PostMapping("/uploadLogo/{orgId}")
     @PreAuthorize("hasAuthority('system:org:edit')")
-    public ResponseEntity<String> uploadLogo(@PathVariable String orgId, @RequestParam("file") Object file) {
+    public Result<String> uploadLogo(@PathVariable String orgId, @RequestParam("file") Object file) {
         String logoUrl = organizationService.uploadOrgLogo(orgId, file);
-        return ResponseEntity.ok(logoUrl);
+        return Result.ok(logoUrl);
     }
 
     /**
@@ -79,8 +82,8 @@ public class SysOrganizationExtController {
      */
     @PostMapping("/uploadLicense/{orgId}")
     @PreAuthorize("hasAuthority('system:org:edit')")
-    public ResponseEntity<String> uploadLicense(@PathVariable String orgId, @RequestParam("file") Object file) {
+    public Result<String> uploadLicense(@PathVariable String orgId, @RequestParam("file") Object file) {
         String licenseUrl = organizationService.uploadOrgLicense(orgId, file);
-        return ResponseEntity.ok(licenseUrl);
+        return Result.ok(licenseUrl);
     }
 } 

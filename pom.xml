@@ -43,16 +43,23 @@
         <spring-boot.version>2.7.18</spring-boot.version>
         <!-- 依赖版本管理 -->
         <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
+        <mybatis-spring.version>2.3.1</mybatis-spring.version>
+        <pagehelper.version>1.4.6</pagehelper.version>
         <druid.version>1.2.18</druid.version>
         <springdoc-openapi.version>1.6.15</springdoc-openapi.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <hutool.version>5.8.23</hutool.version>
         <commons-lang3.version>3.13.0</commons-lang3.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
         <guava.version>32.1.3-jre</guava.version>
         <jwt.version>0.11.5</jwt.version>
         <rocketmq.version>2.2.3</rocketmq.version>
         <flowable.version>6.7.2</flowable.version>
         <wxjava.version>4.5.0</wxjava.version>
+        <mysql.version>8.0.33</mysql.version>
+        <zxing.version>3.5.2</zxing.version>
+        <poi.version>5.2.3</poi.version>
+        <jackson.version>2.13.5</jackson.version>
     </properties>
     
     <dependencyManagement>
@@ -121,6 +128,25 @@
                 <version>${mybatis-plus.version}</version>
             </dependency>
             
+            <!-- MyBatis Spring Boot Starter -->
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis-spring.version}</version>
+            </dependency>
+            
+            <!-- PageHelper 分页插件 -->
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>5.3.3</version>
+            </dependency>
+            
             <!-- Druid数据库连接池 -->
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -128,8 +154,19 @@
                 <version>${druid.version}</version>
             </dependency>
             
+            <!-- MySQL 驱动 -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+            
             <!-- API文档 -->
-
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>${springdoc-openapi.version}</version>
+            </dependency>
             
             <!-- 对象映射 -->
             <dependency>
@@ -153,6 +190,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -190,6 +232,21 @@
                 <artifactId>flowable-spring-boot-starter</artifactId>
                 <version>${flowable.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.flowable</groupId>
+                <artifactId>flowable-spring-boot-starter-process</artifactId>
+                <version>${flowable.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flowable</groupId>
+                <artifactId>flowable-spring-boot-starter-actuator</artifactId>
+                <version>${flowable.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flowable</groupId>
+                <artifactId>flowable-json-converter</artifactId>
+                <version>${flowable.version}</version>
+            </dependency>
             
             <!-- 微信Java开发工具 -->
             <dependency>
@@ -202,6 +259,48 @@
                 <artifactId>weixin-java-pay</artifactId>
                 <version>${wxjava.version}</version>
             </dependency>
+            
+            <!-- QR Code生成 -->
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>core</artifactId>
+                <version>${zxing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>javase</artifactId>
+                <version>${zxing.version}</version>
+            </dependency>
+            
+            <!-- Excel处理 -->
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.version}</version>
+            </dependency>
+            
+            <!-- Jackson JSON -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            
             <!-- JDBC -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>

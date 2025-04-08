@@ -3,17 +3,17 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>com.example</groupId>
         <artifactId>base-project</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    
+
     <artifactId>base-core</artifactId>
     <name>Base Core</name>
     <description>核心基础设施，包含通用工具、异常处理等</description>
-    
+
     <dependencies>
         <!-- Spring Boot 依赖 -->
         <dependency>
