@@ -7,7 +7,7 @@ import com.example.auth.annotation.RequiresPermission;
 import com.example.auth.annotation.RequiresRole;
 import com.example.auth.domain.vo.LoginUserVO;
 import com.example.auth.service.AuthService;
-import com.example.auth.utils.ResponseResult;
+import com.example.auth.response.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,8 +35,8 @@ public class UserDemoController {
      */
     @GetMapping("/anonymous")
     @AuthIgnore
-    public ResponseResult<String> anonymous() {
-        return ResponseResult.success("匿名访问成功");
+    public Result<String> anonymous() {
+        return Result.ok("匿名访问成功");
     }
 
     /**
@@ -46,8 +46,8 @@ public class UserDemoController {
      */
     @GetMapping("/login")
     @RequiresLogin
-    public ResponseResult<LoginUserVO> needLogin() {
-        return ResponseResult.success("登录访问成功",authService.getLoginUser());
+    public Result<LoginUserVO> needLogin() {
+        return Result.ok("登录访问成功",authService.getLoginUser());
     }
 
     /**
@@ -57,8 +57,8 @@ public class UserDemoController {
      */
     @GetMapping("/permission/view")
     @RequiresPermission("user:view")
-    public ResponseResult<String> needViewPermission() {
-        return ResponseResult.success("user:view权限访问成功");
+    public Result<String> needViewPermission() {
+        return Result.ok("user:view权限访问成功");
     }
 
     /**
@@ -69,8 +69,8 @@ public class UserDemoController {
      */
     @GetMapping("/permission/add-edit")
     @RequiresPermission(value = {"user:add", "user:edit"}, logical = Logical.AND)
-    public ResponseResult<String> needAddAndEditPermission() {
-        return ResponseResult.success("user:add AND user:edit权限访问成功");
+    public Result<String> needAddAndEditPermission() {
+        return Result.ok("user:add AND user:edit权限访问成功");
     }
 
     /**
@@ -81,8 +81,8 @@ public class UserDemoController {
      */
     @GetMapping("/permission/add-or-edit")
     @RequiresPermission(value = {"user:add", "user:edit"}, logical = Logical.OR)
-    public ResponseResult<String> needAddOrEditPermission() {
-        return ResponseResult.success("user:add OR user:edit权限访问成功");
+    public Result<String> needAddOrEditPermission() {
+        return Result.ok("user:add OR user:edit权限访问成功");
     }
 
     /**
@@ -92,8 +92,8 @@ public class UserDemoController {
      */
     @GetMapping("/role/admin")
     @RequiresRole("admin")
-    public ResponseResult<String> needAdminRole() {
-        return ResponseResult.success("admin角色访问成功");
+    public Result<String> needAdminRole() {
+        return Result.ok("admin角色访问成功");
     }
 
     /**
@@ -104,8 +104,8 @@ public class UserDemoController {
      */
     @GetMapping("/role/admin-operator")
     @RequiresRole(value = {"admin", "operator"}, logical = Logical.AND)
-    public ResponseResult<String> needAdminAndOperatorRole() {
-        return ResponseResult.success("admin AND operator角色访问成功");
+    public Result<String> needAdminAndOperatorRole() {
+        return Result.ok("admin AND operator角色访问成功");
     }
 
     /**
@@ -116,7 +116,7 @@ public class UserDemoController {
      */
     @GetMapping("/role/admin-or-operator")
     @RequiresRole(value = {"admin", "operator"}, logical = Logical.OR)
-    public ResponseResult<String> needAdminOrOperatorRole() {
-        return ResponseResult.success("admin OR operator角色访问成功");
+    public Result<String> needAdminOrOperatorRole() {
+        return Result.ok("admin OR operator角色访问成功");
     }
 } 

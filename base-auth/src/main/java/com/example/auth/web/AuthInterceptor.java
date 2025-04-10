@@ -17,7 +17,7 @@ import com.example.auth.annotation.RequiresPermission;
 import com.example.auth.annotation.RequiresRole;
 import com.example.auth.config.AuthProperties;
 import com.example.auth.service.AuthService;
-import com.example.auth.utils.ResponseResult;
+import com.example.auth.response.Result;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -198,7 +198,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         
-        ResponseResult<Void> result = ResponseResult.error(HttpStatus.UNAUTHORIZED.value(), message);
+        Result<Void> result = Result.error(HttpStatus.UNAUTHORIZED.value(), message);
         PrintWriter writer = response.getWriter();
         writer.write(objectMapper.writeValueAsString(result));
         writer.flush();
@@ -216,7 +216,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         
-        ResponseResult<Void> result = ResponseResult.error(HttpStatus.FORBIDDEN.value(), message);
+        Result<Void> result = Result.error(HttpStatus.FORBIDDEN.value(), message);
         PrintWriter writer = response.getWriter();
         writer.write(objectMapper.writeValueAsString(result));
         writer.flush();

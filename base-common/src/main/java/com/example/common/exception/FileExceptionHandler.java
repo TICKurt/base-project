@@ -1,6 +1,6 @@
 package com.example.common.exception;
 
-import com.example.core.response.Result;
+import com.example.auth.response.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ public class FileExceptionHandler {
      */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public Result<Map<String, Object>> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
-        return Result.fail("上传文件大小超过限制");
+        return Result.error("上传文件大小超过限制");
     }
 
     /**
@@ -41,7 +41,7 @@ public class FileExceptionHandler {
     @ExceptionHandler(MultipartException.class)
     public Result<Map<String, Object>> handleMultipartException(MultipartException e) {
         log.error("文件上传失败", e);
-        return Result.fail("文件上传失败" + e.getMessage());
+        return Result.error("文件上传失败" + e.getMessage());
     }
 
     /**
@@ -53,7 +53,7 @@ public class FileExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public Result<Map<String, Object>> handleIllegalArgumentException(IllegalArgumentException e) {
         log.error("参数错误", e);
-        return Result.fail("参数错误" + e.getMessage());
+        return Result.error("参数错误" + e.getMessage());
     }
 
     /**
@@ -65,6 +65,6 @@ public class FileExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Result<Map<String, Object>> handleException(Exception e) {
         log.error("系统异常", e);
-        return Result.fail("系统异常" + e.getMessage());
+        return Result.error("系统异常" + e.getMessage());
     }
 } 

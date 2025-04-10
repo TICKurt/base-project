@@ -1,7 +1,7 @@
 package com.example.business.controller;
 
 import com.example.auth.annotation.AuthIgnore;
-import com.example.auth.utils.ResponseResult;
+import com.example.auth.response.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ public class TestController {
      */
     @GetMapping("/hello")
     @AuthIgnore
-    public ResponseResult<String> hello() {
-        return ResponseResult.success("Hello, Test Service is running!");
+    public Result<String> hello() {
+        return Result.ok("Hello, Test Service is running!");
     }
 } 

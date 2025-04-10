@@ -3,7 +3,7 @@ package com.example.business.controller;
 import com.example.auth.annotation.AuthIgnore;
 import com.example.auth.domain.vo.LoginUserVO;
 import com.example.auth.service.TokenService;
-import com.example.auth.utils.ResponseResult;
+import com.example.auth.response.Result;
 import com.example.business.domain.dto.LoginDTO;
 import com.example.business.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     @AuthIgnore
-    public ResponseResult<Map<String, Object>> login(@Validated @RequestBody LoginDTO loginDTO) {
+    public Result<Map<String, Object>> login(@Validated @RequestBody LoginDTO loginDTO) {
         // 用户认证
         LoginUserVO loginUser = userService.login(loginDTO.getUsername(), loginDTO.getPassword());
         
@@ -50,6 +50,6 @@ public class AuthController {
         result.put("token", token);
         result.put("user", loginUser);
         
-        return ResponseResult.success("登录成功", result);
+        return Result.ok("登录成功", result);
     }
 } 

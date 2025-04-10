@@ -4,7 +4,7 @@ import com.example.auth.dto.SysMenuDTO;
 import com.example.auth.service.SysMenuService;
 import com.example.auth.vo.RouterVO;
 import com.example.auth.vo.SysMenuVO;
-import com.example.core.response.Result;
+import com.example.auth.response.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

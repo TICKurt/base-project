@@ -8,7 +8,7 @@ import com.example.auth.domain.vo.UserVO;
 import com.example.auth.service.AuthService;
 import com.example.auth.service.SysUserService;
 import com.example.auth.domain.vo.LoginUserVO;
-import com.example.auth.utils.ResponseResult;
+import com.example.auth.response.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -41,12 +41,12 @@ public class SysUserController {
      */
     @GetMapping("/page")
     @RequiresPermission("system:user:list")
-    public ResponseResult<IPage<UserVO>> getUserPage(
+    public Result<IPage<UserVO>> getUserPage(
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             UserQueryDTO query) {
         IPage<UserVO> result = userService.getUserPage(page, size, query);
-        return ResponseResult.success(result);
+        return Result.ok(result);
     }
 
     /**
@@ -57,12 +57,12 @@ public class SysUserController {
      */
     @GetMapping("/{userId}")
     @RequiresPermission("system:user:query")
-    public ResponseResult<UserVO> getUserInfo(@PathVariable String userId) {
+    public Result<UserVO> getUserInfo(@PathVariable String userId) {
         UserVO user = userService.getUserById(userId);
         if (user == null) {
-            return ResponseResult.error("用户不存在");
+            return Result.error("用户不存在");
         }
-        return ResponseResult.success(user);
+        return Result.ok(user);
     }
 
     /**
@@ -71,12 +71,12 @@ public class SysUserController {
      * @return 当前用户信息
      */
     @GetMapping("/info")
-    public ResponseResult<LoginUserVO> getCurrentUserInfo() {
+    public Result<LoginUserVO> getCurrentUserInfo() {
         LoginUserVO loginUser = authService.getLoginUser();
         if (loginUser == null) {
-            return ResponseResult.error("用户未登录");
+            return Result.error("用户未登录");
         }
-        return ResponseResult.success(loginUser);
+        return Result.ok(loginUser);
     }
 
     /**
@@ -87,17 +87,17 @@ public class SysUserController {
      */
     @PostMapping
     @RequiresPermission("system:user:add")
-    public ResponseResult<String> createUser(@Valid @RequestBody UserDTO userDTO) {
+    public Result<String> createUser(@Valid @RequestBody UserDTO userDTO) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
         // 校验用户数据是否合法
         if (!userService.checkUserValid(userDTO)) {
-            return ResponseResult.error("用户名、手机号或邮箱已存在");
+            return Result.error("用户名、手机号或邮箱已存在");
         }
         
         String userId = userService.createUser(userDTO, loginUser.getUserId());
-        return ResponseResult.success(userId, "用户创建成功");
+        return Result.ok(userId, "用户创建成功");
     }
 
     /**
@@ -108,10 +108,10 @@ public class SysUserController {
      */
     @PutMapping
     @RequiresPermission("system:user:edit")
-    public ResponseResult<String> updateUser(@Valid @RequestBody UserDTO userDTO) {
+    public Result<String> updateUser(@Valid @RequestBody UserDTO userDTO) {
         // 校验用户ID
         if (userDTO.getId() == null || userDTO.getId().isEmpty()) {
-            return ResponseResult.error("用户ID不能为空");
+            return Result.error("用户ID不能为空");
         }
         
         // 获取当前登录用户
@@ -119,11 +119,11 @@ public class SysUserController {
         
         // 校验用户数据是否合法
         if (!userService.checkUserValid(userDTO)) {
-            return ResponseResult.error("用户名、手机号或邮箱已存在");
+            return Result.error("用户名、手机号或邮箱已存在");
         }
         
         boolean result = userService.updateUser(userDTO, loginUser.getUserId());
-        return result ? ResponseResult.success("用户更新成功") : ResponseResult.error("用户更新失败");
+        return result ? Result.ok("用户更新成功") : Result.error("用户更新失败");
     }
 
     /**
@@ -134,17 +134,17 @@ public class SysUserController {
      */
     @DeleteMapping("/{userId}")
     @RequiresPermission("system:user:remove")
-    public ResponseResult<String> deleteUser(@PathVariable String userId) {
+    public Result<String> deleteUser(@PathVariable String userId) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
         // 不能删除自己
         if (userId.equals(loginUser.getUserId())) {
-            return ResponseResult.error("不能删除当前登录用户");
+            return Result.error("不能删除当前登录用户");
         }
         
         boolean result = userService.deleteUser(userId, loginUser.getUserId());
-        return result ? ResponseResult.success("用户删除成功") : ResponseResult.error("用户删除失败");
+        return result ? Result.ok("用户删除成功") : Result.error("用户删除失败");
     }
 
     /**
@@ -155,7 +155,7 @@ public class SysUserController {
      */
     @DeleteMapping("/batch")
     @RequiresPermission("system:user:remove")
-    public ResponseResult<String> batchDeleteUsers(@RequestBody List<String> userIds) {
+    public Result<String> batchDeleteUsers(@RequestBody List<String> userIds) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
@@ -163,11 +163,11 @@ public class SysUserController {
         userIds.remove(loginUser.getUserId());
         
         if (userIds.isEmpty()) {
-            return ResponseResult.error("没有可删除的用户");
+            return Result.error("没有可删除的用户");
         }
         
         boolean result = userService.batchDeleteUsers(userIds, loginUser.getUserId());
-        return result ? ResponseResult.success("用户批量删除成功") : ResponseResult.error("用户批量删除失败");
+        return result ? Result.ok("用户批量删除成功") : Result.error("用户批量删除失败");
     }
 
     /**
@@ -179,14 +179,14 @@ public class SysUserController {
      */
     @PutMapping("/{userId}/password")
     @RequiresPermission("system:user:resetPwd")
-    public ResponseResult<String> resetPassword(
+    public Result<String> resetPassword(
             @PathVariable String userId,
             @RequestParam String newPassword) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
         boolean result = userService.resetPassword(userId, newPassword, loginUser.getUserId());
-        return result ? ResponseResult.success("密码重置成功") : ResponseResult.error("密码重置失败");
+        return result ? Result.ok("密码重置成功") : Result.error("密码重置失败");
     }
 
     /**
@@ -198,7 +198,7 @@ public class SysUserController {
      */
     @PutMapping("/{userId}/status")
     @RequiresPermission("system:user:edit")
-    public ResponseResult<String> updateStatus(
+    public Result<String> updateStatus(
             @PathVariable String userId,
             @RequestParam Integer status) {
         // 获取当前登录用户
@@ -206,16 +206,16 @@ public class SysUserController {
         
         // 不能修改自己的状态
         if (userId.equals(loginUser.getUserId())) {
-            return ResponseResult.error("不能修改当前登录用户的状态");
+            return Result.error("不能修改当前登录用户的状态");
         }
         
         // 校验状态值
         if (status < 0 || status > 2) {
-            return ResponseResult.error("状态值不正确");
+            return Result.error("状态值不正确");
         }
         
         boolean result = userService.updateStatus(userId, status, loginUser.getUserId());
-        return result ? ResponseResult.success("状态更新成功") : ResponseResult.error("状态更新失败");
+        return result ? Result.ok("状态更新成功") : Result.error("状态更新失败");
     }
 
     /**
@@ -226,9 +226,9 @@ public class SysUserController {
      */
     @GetMapping("/{userId}/roles")
     @RequiresPermission("system:user:query")
-    public ResponseResult<List<String>> getUserRoles(@PathVariable String userId) {
+    public Result<List<String>> getUserRoles(@PathVariable String userId) {
         List<String> roleIds = userService.getUserRoleIds(userId);
-        return ResponseResult.success(roleIds);
+        return Result.ok(roleIds);
     }
 
     /**
@@ -240,14 +240,14 @@ public class SysUserController {
      */
     @PutMapping("/{userId}/roles")
     @RequiresPermission("system:user:edit")
-    public ResponseResult<String> assignRoles(
+    public Result<String> assignRoles(
             @PathVariable String userId,
             @RequestBody List<String> roleIds) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
         boolean result = userService.assignRoles(userId, roleIds, loginUser.getUserId());
-        return result ? ResponseResult.success("角色分配成功") : ResponseResult.error("角色分配失败");
+        return result ? Result.ok("角色分配成功") : Result.error("角色分配失败");
     }
 
     /**
@@ -259,11 +259,11 @@ public class SysUserController {
      */
     @GetMapping("/org/{orgId}")
     @RequiresPermission("system:user:list")
-    public ResponseResult<List<UserVO>> getUsersByOrgId(
+    public Result<List<UserVO>> getUsersByOrgId(
             @PathVariable String orgId,
             @RequestParam(defaultValue = "false") boolean includeChildOrg) {
         List<UserVO> users = userService.getUsersByOrgId(orgId, includeChildOrg);
-        return ResponseResult.success(users);
+        return Result.ok(users);
     }
 
     /**
@@ -274,8 +274,8 @@ public class SysUserController {
      */
     @GetMapping("/role/{roleId}")
     @RequiresPermission("system:user:list")
-    public ResponseResult<List<UserVO>> getUsersByRoleId(@PathVariable String roleId) {
+    public Result<List<UserVO>> getUsersByRoleId(@PathVariable String roleId) {
         List<UserVO> users = userService.getUsersByRoleId(roleId);
-        return ResponseResult.success(users);
+        return Result.ok(users);
     }
 } 

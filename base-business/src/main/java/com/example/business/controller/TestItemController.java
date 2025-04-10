@@ -7,7 +7,7 @@ import com.example.auth.annotation.RequiresPermission;
 import com.example.auth.annotation.RequiresRole;
 import com.example.auth.domain.vo.LoginUserVO;
 import com.example.auth.service.TokenService;
-import com.example.auth.utils.ResponseResult;
+import com.example.auth.response.Result;
 import com.example.business.domain.dto.TestItemDTO;
 import com.example.business.domain.vo.TestItemVO;
 import com.example.business.service.TestItemService;
@@ -41,7 +41,7 @@ public class TestItemController {
      */
     @PostMapping("/login")
     @AuthIgnore
-    public ResponseResult<LoginUserVO> login(@RequestParam String username, @RequestParam String password) {
+    public Result<LoginUserVO> login(@RequestParam String username, @RequestParam String password) {
         // 简单示例，实际应该查询数据库验证用户名和密码
         if ("admin".equals(username) && "admin123".equals(password)) {
             // 创建登录用户信息
@@ -72,7 +72,7 @@ public class TestItemController {
             Date expireTime = new Date(System.currentTimeMillis() + 30 * 60 * 1000); // 30分钟后
             loginUser.setExpireTime(expireTime);
             
-            return ResponseResult.success(loginUser);
+            return Result.ok(loginUser);
         } else if ("user1".equals(username) && "pass123".equals(password)) {
             // 普通用户登录
             LoginUserVO loginUser = new LoginUserVO();
@@ -98,7 +98,7 @@ public class TestItemController {
             Date expireTime = new Date(System.currentTimeMillis() + 30 * 60 * 1000); // 30分钟后
             loginUser.setExpireTime(expireTime);
             
-            return ResponseResult.success(loginUser);
+            return Result.ok(loginUser);
         } else if ("user2".equals(username) && "pass456".equals(password)) {
             // 编辑用户登录
             LoginUserVO loginUser = new LoginUserVO();
@@ -126,9 +126,9 @@ public class TestItemController {
             Date expireTime = new Date(System.currentTimeMillis() + 30 * 60 * 1000); // 30分钟后
             loginUser.setExpireTime(expireTime);
             
-            return ResponseResult.success(loginUser);
+            return Result.ok(loginUser);
         } else {
-            return ResponseResult.error("用户名或密码错误");
+            return Result.error("用户名或密码错误");
         }
     }
 
@@ -142,13 +142,13 @@ public class TestItemController {
      */
     @GetMapping("/page")
     @RequiresLogin
-    public ResponseResult<Page<TestItemVO>> page(
+    public Result<Page<TestItemVO>> page(
             @RequestParam(defaultValue = "1") long current,
             @RequestParam(defaultValue = "10") long size,
             @RequestParam(required = false) String name) {
         Page<TestItemVO> page = new Page<>(current, size);
         Page<TestItemVO> result = testItemService.page(page, name);
-        return ResponseResult.success(result);
+        return Result.ok(result);
     }
 
     /**
@@ -159,12 +159,12 @@ public class TestItemController {
      */
     @GetMapping("/{id}")
     @RequiresLogin
-    public ResponseResult<TestItemVO> getById(@PathVariable Integer id) {
+    public Result<TestItemVO> getById(@PathVariable Integer id) {
         TestItemVO testItem = testItemService.getById(id);
         if (testItem == null) {
-            return ResponseResult.error("项目不存在");
+            return Result.error("项目不存在");
         }
-        return ResponseResult.success(testItem);
+        return Result.ok(testItem);
     }
 
     /**
@@ -176,9 +176,9 @@ public class TestItemController {
     @PostMapping
     @RequiresLogin
     @RequiresPermission("test:item:add")
-    public ResponseResult<TestItemVO> add(@Validated @RequestBody TestItemDTO dto) {
+    public Result<TestItemVO> add(@Validated @RequestBody TestItemDTO dto) {
         TestItemVO testItem = testItemService.add(dto);
-        return ResponseResult.success(testItem);
+        return Result.ok(testItem);
     }
 
     /**
@@ -190,15 +190,15 @@ public class TestItemController {
     @PutMapping
     @RequiresLogin
     @RequiresPermission("test:item:edit")
-    public ResponseResult<TestItemVO> update(@Validated @RequestBody TestItemDTO dto) {
+    public Result<TestItemVO> update(@Validated @RequestBody TestItemDTO dto) {
         if (dto.getId() == null) {
-            return ResponseResult.error("项目ID不能为空");
+            return Result.error("项目ID不能为空");
         }
         try {
             TestItemVO testItem = testItemService.update(dto);
-            return ResponseResult.success(testItem);
+            return Result.ok(testItem);
         } catch (RuntimeException e) {
-            return ResponseResult.error(e.getMessage());
+            return Result.error(e.getMessage());
         }
     }
 
@@ -211,12 +211,12 @@ public class TestItemController {
     @DeleteMapping("/{id}")
     @RequiresLogin
     @RequiresPermission("test:item:delete")
-    public ResponseResult<Boolean> delete(@PathVariable Integer id) {
+    public Result<Boolean> delete(@PathVariable Integer id) {
         try {
             boolean result = testItemService.delete(id);
-            return ResponseResult.success(result);
+            return Result.ok(result);
         } catch (RuntimeException e) {
-            return ResponseResult.error(e.getMessage());
+            return Result.error(e.getMessage());
         }
     }
     
@@ -230,9 +230,9 @@ public class TestItemController {
     @DeleteMapping("/batch")
     @RequiresLogin
     @RequiresRole("admin")
-    public ResponseResult<Boolean> batchDelete(@RequestBody Integer[] ids) {
+    public Result<Boolean> batchDelete(@RequestBody Integer[] ids) {
         if (ids == null || ids.length == 0) {
-            return ResponseResult.error("项目ID不能为空");
+            return Result.error("项目ID不能为空");
         }
         
         boolean result = true;
@@ -244,7 +244,7 @@ public class TestItemController {
             }
         }
         
-        return ResponseResult.success(result);
+        return Result.ok(result);
     }
     
     /**
@@ -256,7 +256,7 @@ public class TestItemController {
     @GetMapping("/admin-info")
     @RequiresLogin
     @RequiresRole("admin")
-    public ResponseResult<Map<String, Object>> getAdminInfo() {
+    public Result<Map<String, Object>> getAdminInfo() {
         Map<String, Object> adminInfo = new HashMap<>();
         adminInfo.put("totalItems", 100);  // 示例数据，实际应从服务层获取
         adminInfo.put("activeUsers", 25);
@@ -266,7 +266,7 @@ public class TestItemController {
         adminInfo.put("memoryUsage", "1.8GB/4GB");
         adminInfo.put("diskUsage", "120GB/500GB");
         
-        return ResponseResult.success(adminInfo);
+        return Result.ok(adminInfo);
     }
     
     /**
@@ -278,14 +278,14 @@ public class TestItemController {
     @GetMapping("/editor-actions")
     @RequiresLogin
     @RequiresRole("editor")
-    public ResponseResult<Map<String, Object>> getEditorActions() {
+    public Result<Map<String, Object>> getEditorActions() {
         Map<String, Object> editorActions = new HashMap<>();
         editorActions.put("drafts", 5);
         editorActions.put("pendingReviews", 3);
         editorActions.put("availableTemplates", 10);
         editorActions.put("lastEditTime", new Date());
         
-        return ResponseResult.success(editorActions);
+        return Result.ok(editorActions);
     }
 
 

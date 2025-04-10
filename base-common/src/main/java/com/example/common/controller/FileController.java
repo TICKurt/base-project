@@ -4,7 +4,7 @@ import com.example.auth.annotation.RequiresPermission;
 import com.example.common.model.FileInfo;
 import com.example.common.service.FileService;
 import com.example.common.util.FileUtils;
-import com.example.core.response.Result;
+import com.example.auth.response.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +62,7 @@ public class FileController {
             return Result.ok(fileInfo);
         } catch (IOException e) {
             log.error("上传文件失败", e);
-            return Result.fail("上传文件失败" + e.getMessage());
+            return Result.error("上传文件失败" + e.getMessage());
         }
     }
 
@@ -88,7 +88,7 @@ public class FileController {
             return Result.ok(fileInfos);
         } catch (IOException e) {
             log.error("批量上传文件失败", e);
-            return Result.fail("批量上传文件失败" + e.getMessage());
+            return Result.error("批量上传文件失败" + e.getMessage());
         }
     }
 

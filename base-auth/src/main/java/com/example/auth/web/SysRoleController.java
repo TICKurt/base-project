@@ -8,7 +8,7 @@ import com.example.auth.domain.vo.RoleVO;
 import com.example.auth.service.AuthService;
 import com.example.auth.service.SysRoleService;
 import com.example.auth.domain.vo.LoginUserVO;
-import com.example.auth.utils.ResponseResult;
+import com.example.auth.response.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -44,12 +44,12 @@ public class SysRoleController {
      */
     @GetMapping("/page")
     @RequiresPermission("system:role:list")
-    public ResponseResult<PageInfo<RoleVO>> getRolePage(
+    public Result<PageInfo<RoleVO>> getRolePage(
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "10") Integer pageSize,
             RoleQueryDTO query) {
         PageInfo<RoleVO> result = roleService.getRolePage(pageNum, pageSize, query);
-        return ResponseResult.success(result);
+        return Result.ok(result);
     }
 
     /**
@@ -60,12 +60,12 @@ public class SysRoleController {
      */
     @GetMapping("/{roleId}")
     @RequiresPermission("system:role:query")
-    public ResponseResult<RoleVO> getRoleInfo(@PathVariable String roleId) {
+    public Result<RoleVO> getRoleInfo(@PathVariable String roleId) {
         RoleVO role = roleService.getRoleById(roleId);
         if (role == null) {
-            return ResponseResult.error("角色不存在");
+            return Result.error("角色不存在");
         }
-        return ResponseResult.success(role);
+        return Result.ok(role);
     }
 
     /**
@@ -76,17 +76,17 @@ public class SysRoleController {
      */
     @PostMapping
     @RequiresPermission("system:role:add")
-    public ResponseResult<String> createRole(@Valid @RequestBody RoleDTO roleDTO) {
+    public Result<String> createRole(@Valid @RequestBody RoleDTO roleDTO) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
         // 校验角色数据是否合法
         if (!roleService.checkRoleValid(roleDTO)) {
-            return ResponseResult.error("角色名称或编码已存在");
+            return Result.error("角色名称或编码已存在");
         }
         
         String roleId = roleService.createRole(roleDTO, loginUser.getUserId());
-        return ResponseResult.success(roleId, "角色创建成功");
+        return Result.ok(roleId, "角色创建成功");
     }
 
     /**
@@ -97,10 +97,10 @@ public class SysRoleController {
      */
     @PutMapping
     @RequiresPermission("system:role:edit")
-    public ResponseResult<String> updateRole(@Valid @RequestBody RoleDTO roleDTO) {
+    public Result<String> updateRole(@Valid @RequestBody RoleDTO roleDTO) {
         // 校验角色ID
         if (roleDTO.getId() == null || roleDTO.getId().isEmpty()) {
-            return ResponseResult.error("角色ID不能为空");
+            return Result.error("角色ID不能为空");
         }
         
         // 获取当前登录用户
@@ -108,11 +108,11 @@ public class SysRoleController {
         
         // 校验角色数据是否合法
         if (!roleService.checkRoleValid(roleDTO)) {
-            return ResponseResult.error("角色名称或编码已存在");
+            return Result.error("角色名称或编码已存在");
         }
         
         boolean result = roleService.updateRole(roleDTO, loginUser.getUserId());
-        return result ? ResponseResult.success("角色更新成功") : ResponseResult.error("角色更新失败");
+        return result ? Result.ok("角色更新成功") : Result.error("角色更新失败");
     }
 
     /**
@@ -123,15 +123,15 @@ public class SysRoleController {
      */
     @DeleteMapping("/{roleId}")
     @RequiresPermission("system:role:remove")
-    public ResponseResult<String> deleteRole(@PathVariable String roleId) {
+    public Result<String> deleteRole(@PathVariable String roleId) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
         try {
             boolean result = roleService.deleteRole(roleId, loginUser.getUserId());
-            return result ? ResponseResult.success("角色删除成功") : ResponseResult.error("角色删除失败");
+            return result ? Result.ok("角色删除成功") : Result.error("角色删除失败");
         } catch (RuntimeException e) {
-            return ResponseResult.error(e.getMessage());
+            return Result.error(e.getMessage());
         }
     }
 
@@ -143,16 +143,16 @@ public class SysRoleController {
      */
     @DeleteMapping("/batch")
     @RequiresPermission("system:role:remove")
-    public ResponseResult<String> batchDeleteRoles(@RequestBody List<String> roleIds) {
+    public Result<String> batchDeleteRoles(@RequestBody List<String> roleIds) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
         if (roleIds.isEmpty()) {
-            return ResponseResult.error("没有可删除的角色");
+            return Result.error("没有可删除的角色");
         }
         
         boolean result = roleService.batchDeleteRoles(roleIds, loginUser.getUserId());
-        return result ? ResponseResult.success("角色批量删除成功") : ResponseResult.error("角色批量删除失败");
+        return result ? Result.ok("角色批量删除成功") : Result.error("角色批量删除失败");
     }
 
     /**
@@ -164,7 +164,7 @@ public class SysRoleController {
      */
     @PutMapping("/{roleId}/status")
     @RequiresPermission("system:role:edit")
-    public ResponseResult<String> updateStatus(
+    public Result<String> updateStatus(
             @PathVariable String roleId,
             @RequestParam Integer status) {
         // 获取当前登录用户
@@ -172,14 +172,14 @@ public class SysRoleController {
         
         // 校验状态值
         if (status < 0 || status > 1) {
-            return ResponseResult.error("状态值不正确");
+            return Result.error("状态值不正确");
         }
         
         try {
             boolean result = roleService.updateStatus(roleId, status, loginUser.getUserId());
-            return result ? ResponseResult.success("状态更新成功") : ResponseResult.error("状态更新失败");
+            return result ? Result.ok("状态更新成功") : Result.error("状态更新失败");
         } catch (RuntimeException e) {
-            return ResponseResult.error(e.getMessage());
+            return Result.error(e.getMessage());
         }
     }
 
@@ -192,14 +192,14 @@ public class SysRoleController {
      */
     @PutMapping("/{roleId}/menus")
     @RequiresPermission("system:role:edit")
-    public ResponseResult<String> assignMenus(
+    public Result<String> assignMenus(
             @PathVariable String roleId,
             @RequestBody List<String> menuIds) {
         // 获取当前登录用户
         LoginUserVO loginUser = authService.getLoginUser();
         
         boolean result = roleService.assignMenus(roleId, menuIds, loginUser.getUserId());
-        return result ? ResponseResult.success("菜单权限分配成功") : ResponseResult.error("菜单权限分配失败");
+        return result ? Result.ok("菜单权限分配成功") : Result.error("菜单权限分配失败");
     }
 
     /**
@@ -210,9 +210,9 @@ public class SysRoleController {
      */
     @GetMapping("/{roleId}/menus")
     @RequiresPermission("system:role:query")
-    public ResponseResult<List<String>> getRoleMenuIds(@PathVariable String roleId) {
+    public Result<List<String>> getRoleMenuIds(@PathVariable String roleId) {
         List<String> menuIds = roleService.getRoleMenuIds(roleId);
-        return ResponseResult.success(menuIds);
+        return Result.ok(menuIds);
     }
 
     /**
@@ -225,7 +225,7 @@ public class SysRoleController {
      */
     @PutMapping("/{roleId}/dataScope")
     @RequiresPermission("system:role:edit")
-    public ResponseResult<String> assignDataScope(
+    public Result<String> assignDataScope(
             @PathVariable String roleId,
             @RequestParam Integer dataScope,
             @RequestBody(required = false) List<String> orgIds) {
@@ -234,16 +234,16 @@ public class SysRoleController {
         
         // 校验数据权限范围值
         if (dataScope < 1 || dataScope > 5) {
-            return ResponseResult.error("数据权限范围值不正确");
+            return Result.error("数据权限范围值不正确");
         }
         
         // 如果是自定义数据权限，需要传组织ID列表
         if (dataScope == 5 && (orgIds == null || orgIds.isEmpty())) {
-            return ResponseResult.error("自定义数据权限需要选择组织机构");
+            return Result.error("自定义数据权限需要选择组织机构");
         }
         
         boolean result = roleService.assignDataScope(roleId, dataScope, orgIds, loginUser.getUserId());
-        return result ? ResponseResult.success("数据权限分配成功") : ResponseResult.error("数据权限分配失败");
+        return result ? Result.ok("数据权限分配成功") : Result.error("数据权限分配失败");
     }
 
     /**
@@ -254,9 +254,9 @@ public class SysRoleController {
      */
     @GetMapping("/{roleId}/orgs")
     @RequiresPermission("system:role:query")
-    public ResponseResult<List<String>> getRoleOrgIds(@PathVariable String roleId) {
+    public Result<List<String>> getRoleOrgIds(@PathVariable String roleId) {
         List<String> orgIds = roleService.getRoleOrgIds(roleId);
-        return ResponseResult.success(orgIds);
+        return Result.ok(orgIds);
     }
     
     /**
@@ -266,7 +266,7 @@ public class SysRoleController {
      */
     @GetMapping("/list")
     @RequiresPermission("system:role:list")
-    public ResponseResult<List<RoleVO>> getAllRoles() {
+    public Result<List<RoleVO>> getAllRoles() {
         List<RoleVO> roles = roleService.list().stream()
                 .map(role -> {
                     RoleVO roleVO = new RoleVO();
@@ -280,7 +280,7 @@ public class SysRoleController {
                     return roleVO;
                 })
                 .collect(Collectors.toList());
-        return ResponseResult.success(roles);
+        return Result.ok(roles);
     }
     
     /**
@@ -291,8 +291,8 @@ public class SysRoleController {
      */
     @GetMapping("/{roleId}/userCount")
     @RequiresPermission("system:role:query")
-    public ResponseResult<Integer> getUserCountByRoleId(@PathVariable String roleId) {
+    public Result<Integer> getUserCountByRoleId(@PathVariable String roleId) {
         Integer userCount = roleService.getUserCountByRoleId(roleId);
-        return ResponseResult.success(userCount);
+        return Result.ok(userCount);
     }
 } 

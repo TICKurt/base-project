@@ -1,6 +1,6 @@
 package com.example.workflow.controller;
 
-import com.example.core.response.Result;
+import com.example.auth.response.Result;
 import com.example.workflow.model.vo.HistoricProcessInstanceVO;
 import com.example.workflow.model.vo.HistoricTaskInstanceVO;
 import com.example.workflow.service.HistoryService;
@@ -50,7 +50,7 @@ public class HistoryController {
         } catch (Exception e) {
             // 捕获异常，记录错误日志，并返回500错误
             log.error("查询历史流程实例列表失败", e);
-            return Result.fail("查询历史流程实例列表失败"+e);
+            return Result.error("查询历史流程实例列表失败"+e);
         }
     }
 
@@ -71,7 +71,7 @@ public class HistoryController {
             }
         } catch (Exception e) {
             log.error("获取历史流程实例详情失败", e);
-            return Result.fail("获取历史流程实例详情失败"+e);
+            return Result.error("获取历史流程实例详情失败"+e);
         }
     }
 
@@ -95,7 +95,7 @@ public class HistoryController {
             return Result.ok(list);
         } catch (Exception e) {
             log.error("查询历史任务列表失败", e);
-            return Result.fail("查询历史任务列表失败"+e);
+            return Result.error("查询历史任务列表失败"+e);
         }
     }
 
@@ -116,7 +116,7 @@ public class HistoryController {
             }
         } catch (Exception e) {
             log.error("获取历史任务详情失败", e);
-            return Result.fail("获取历史任务详情失败"+e);
+            return Result.error("获取历史任务详情失败"+e);
         }
     }
 
@@ -133,7 +133,7 @@ public class HistoryController {
             return Result.ok(variables);
         } catch (Exception e) {
             log.error("获取历史流程变量失败", e);
-            return Result.fail("获取历史流程变量失败"+e);
+            return Result.error("获取历史流程变量失败"+e);
         }
     }
 
@@ -150,7 +150,7 @@ public class HistoryController {
             return Result.ok(formData);
         } catch (Exception e) {
             log.error("获取历史任务表单数据失败", e);
-            return Result.fail("获取历史任务表单数据失败"+e);
+            return Result.error("获取历史任务表单数据失败"+e);
         }
     }
 
@@ -167,7 +167,7 @@ public class HistoryController {
             return Result.ok("删除成功");
         } catch (Exception e) {
             log.error("删除历史流程实例失败", e);
-            return Result.fail("删除历史流程实例失败：" + e.getMessage());
+            return Result.error("删除历史流程实例失败：" + e.getMessage());
         }
     }
 } 

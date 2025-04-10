@@ -1,7 +1,7 @@
 package com.example.workflow.controller;
 
 import com.example.common.model.FileInfo;
-import com.example.core.response.Result;
+import com.example.auth.response.Result;
 import com.example.workflow.model.dto.BpmnDeployDTO;
 import com.example.workflow.model.vo.ProcessDefinitionVO;
 import com.example.workflow.service.ProcessDefinitionService;
@@ -49,7 +49,7 @@ public class ProcessDefinitionController {
             return Result.ok(deploymentId);
         } catch (Exception e) {
             log.error("部署流程定义失败", e);
-            return Result.fail("部署流程定义失败：" + e.getMessage());
+            return Result.error("部署流程定义失败：" + e.getMessage());
         }
     }
 
@@ -66,10 +66,10 @@ public class ProcessDefinitionController {
             return Result.ok(deploymentId);
         } catch (IllegalArgumentException e) {
             log.error("部署流程定义参数错误", e);
-            return Result.fail("部署流程定义失败：" + e.getMessage());
+            return Result.error("部署流程定义失败：" + e.getMessage());
         } catch (Exception e) {
             log.error("部署流程定义失败", e);
-            return Result.fail("部署流程定义失败：" + e.getMessage());
+            return Result.error("部署流程定义失败：" + e.getMessage());
         }
     }
 
@@ -89,7 +89,7 @@ public class ProcessDefinitionController {
             return Result.ok("删除成功");
         } catch (Exception e) {
             log.error("删除流程定义失败", e);
-            return Result.fail("删除流程定义失败：" + e.getMessage());
+            return Result.error("删除流程定义失败：" + e.getMessage());
         }
     }
 
@@ -113,7 +113,7 @@ public class ProcessDefinitionController {
             return Result.ok(list);
         } catch (Exception e) {
             log.error("获取流程定义列表失败", e);
-            return Result.fail(null);
+            return Result.error(null);
         }
     }
 
@@ -134,7 +134,7 @@ public class ProcessDefinitionController {
             }
         } catch (Exception e) {
             log.error("获取流程定义详情失败", e);
-            return Result.fail("获取流程定义详情失败" + e.getMessage());
+            return Result.error("获取流程定义详情失败" + e.getMessage());
         }
     }
 
@@ -155,7 +155,7 @@ public class ProcessDefinitionController {
             }
         } catch (Exception e) {
             log.error("获取最新版本流程定义失败", e);
-            return Result.fail("获取最新版本流程定义失败" + e.getMessage());
+            return Result.error("获取最新版本流程定义失败" + e.getMessage());
         }
     }
 
@@ -176,7 +176,7 @@ public class ProcessDefinitionController {
             }
         } catch (Exception e) {
             log.error("获取流程定义XML失败", e);
-            return Result.fail("获取流程定义XML失败" + e.getMessage());
+            return Result.error("获取流程定义XML失败" + e.getMessage());
         }
     }
 
@@ -192,7 +192,7 @@ public class ProcessDefinitionController {
         try {
             if (StringUtils.isBlank(processDefinitionId)) {
                 log.warn("获取流程图失败: processDefinitionId为空");
-                return Result.fail("流程定义ID不能为空");
+                return Result.error("流程定义ID不能为空");
             }
             
             FileInfo fileInfo = processDefinitionService.getProcessDiagram(processDefinitionId);
@@ -201,11 +201,11 @@ public class ProcessDefinitionController {
                 return Result.ok(fileInfo);
             } else {
                 log.warn("未找到流程图: processDefinitionId={}", processDefinitionId);
-                return Result.fail("未找到流程图，可能原因：1.流程定义不存在；2.流程定义没有关联的流程图资源");
+                return Result.error("未找到流程图，可能原因：1.流程定义不存在；2.流程定义没有关联的流程图资源");
             }
         } catch (Exception e) {
             log.error("获取流程图失败, processDefinitionId: {}, 异常: {}", processDefinitionId, e.getMessage(), e);
-            return Result.fail("获取流程图失败: " + e.getMessage());
+            return Result.error("获取流程图失败: " + e.getMessage());
         }
     }
 
@@ -237,7 +237,7 @@ public class ProcessDefinitionController {
             }
         } catch (Exception e) {
             log.error("获取流程资源失败", e);
-            return Result.fail(null);
+            return Result.error(null);
         }
     }
 
@@ -254,7 +254,7 @@ public class ProcessDefinitionController {
             return Result.ok(valid);
         } catch (Exception e) {
             log.error("验证BPMN文件失败", e);
-            return Result.fail("验证BPMN文件失败"+e.getMessage());
+            return Result.error("验证BPMN文件失败"+e.getMessage());
         }
     }
 
@@ -275,7 +275,7 @@ public class ProcessDefinitionController {
             // 记录错误日志
             log.error("验证BPMN XML内容失败", e);
             // 返回500错误码和false
-            return Result.fail("验证BPMN XML内容失败");
+            return Result.error("验证BPMN XML内容失败");
         }
     }
 
@@ -292,7 +292,7 @@ public class ProcessDefinitionController {
             return Result.ok("激活成功");
         } catch (Exception e) {
             log.error("激活流程定义失败", e);
-            return Result.fail("激活流程定义失败：" + e.getMessage());
+            return Result.error("激活流程定义失败：" + e.getMessage());
         }
     }
 
@@ -309,7 +309,7 @@ public class ProcessDefinitionController {
             return Result.ok("挂起成功");
         } catch (Exception e) {
             log.error("挂起流程定义失败", e);
-            return Result.fail("挂起流程定义失败：" + e.getMessage());
+            return Result.error("挂起流程定义失败：" + e.getMessage());
         }
     }
 } 

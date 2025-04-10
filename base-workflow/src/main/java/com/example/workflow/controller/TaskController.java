@@ -1,6 +1,6 @@
 package com.example.workflow.controller;
 
-import com.example.core.response.Result;
+import com.example.auth.response.Result;
 import com.example.workflow.model.vo.TaskVO;
 import com.example.workflow.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ public class TaskController {
             return Result.ok(tasks);
         } catch (Exception e) {
             log.error("查询任务列表失败", e);
-            return Result.fail("查询任务列表失败"+e);
+            return Result.error("查询任务列表失败"+e);
         }
     }
 
@@ -69,7 +69,7 @@ public class TaskController {
             }
         } catch (Exception e) {
             log.error("获取任务详情失败", e);
-            return Result.fail("获取任务详情失败"+e);
+            return Result.error("获取任务详情失败"+e);
         }
     }
 
@@ -89,7 +89,7 @@ public class TaskController {
             return Result.ok("完成任务成功");
         } catch (Exception e) {
             log.error("完成任务失败", e);
-            return Result.fail("完成任务失败：" + e.getMessage());
+            return Result.error("完成任务失败：" + e.getMessage());
         }
     }
 
@@ -109,7 +109,7 @@ public class TaskController {
             return Result.ok("签收任务成功");
         } catch (Exception e) {
             log.error("签收任务失败", e);
-            return Result.fail("签收任务失败：" + e.getMessage());
+            return Result.error("签收任务失败：" + e.getMessage());
         }
     }
 
@@ -126,7 +126,7 @@ public class TaskController {
             return Result.ok("取消签收任务成功");
         } catch (Exception e) {
             log.error("取消签收任务失败", e);
-            return Result.fail("取消签收任务失败：" + e.getMessage());
+            return Result.error("取消签收任务失败：" + e.getMessage());
         }
     }
 
@@ -146,7 +146,7 @@ public class TaskController {
             return Result.ok("委派任务成功");
         } catch (Exception e) {
             log.error("委派任务失败", e);
-            return Result.fail("委派任务失败：" + e.getMessage());
+            return Result.error("委派任务失败：" + e.getMessage());
         }
     }
 
@@ -166,7 +166,7 @@ public class TaskController {
             return Result.ok("转办任务成功");
         } catch (Exception e) {
             log.error("转办任务失败", e);
-            return Result.fail("转办任务失败：" + e.getMessage());
+            return Result.error("转办任务失败：" + e.getMessage());
         }
     }
 
@@ -186,7 +186,7 @@ public class TaskController {
             return Result.ok("设置任务处理人成功");
         } catch (Exception e) {
             log.error("设置任务处理人失败", e);
-            return Result.fail("设置任务处理人失败：" + e.getMessage());
+            return Result.error("设置任务处理人失败：" + e.getMessage());
         }
     }
 
@@ -206,7 +206,7 @@ public class TaskController {
             return Result.ok("添加候选人成功");
         } catch (Exception e) {
             log.error("添加候选人失败", e);
-            return Result.fail("添加候选人失败：" + e.getMessage());
+            return Result.error("添加候选人失败：" + e.getMessage());
         }
     }
 
@@ -226,7 +226,7 @@ public class TaskController {
             return Result.ok("删除候选人成功");
         } catch (Exception e) {
             log.error("删除候选人失败", e);
-            return Result.fail("删除候选人失败：" + e.getMessage());
+            return Result.error("删除候选人失败：" + e.getMessage());
         }
     }
 
@@ -246,7 +246,7 @@ public class TaskController {
             return Result.ok("添加候选组成功");
         } catch (Exception e) {
             log.error("添加候选组失败", e);
-            return Result.fail("添加候选组失败：" + e.getMessage());
+            return Result.error("添加候选组失败：" + e.getMessage());
         }
     }
 
@@ -266,7 +266,7 @@ public class TaskController {
             return Result.ok("删除候选组成功");
         } catch (Exception e) {
             log.error("删除候选组失败", e);
-            return Result.fail("删除候选组失败：" + e.getMessage());
+            return Result.error("删除候选组失败：" + e.getMessage());
         }
     }
 
@@ -283,7 +283,7 @@ public class TaskController {
             return Result.ok(variables);
         } catch (Exception e) {
             log.error("获取任务变量失败", e);
-            return Result.fail("获取任务表单失败"+e);
+            return Result.error("获取任务表单失败"+e);
         }
     }
 
@@ -303,7 +303,7 @@ public class TaskController {
             return Result.ok("设置任务变量成功");
         } catch (Exception e) {
             log.error("设置任务变量失败", e);
-            return Result.fail("设置任务变量失败：" + e.getMessage());
+            return Result.error("设置任务变量失败：" + e.getMessage());
         }
     }
 
@@ -320,7 +320,7 @@ public class TaskController {
             return Result.ok(formKey);
         } catch (Exception e) {
             log.error("获取任务表单失败", e);
-            return Result.fail("获取任务表单失败"+e);
+            return Result.error("获取任务表单失败"+e);
         }
     }
 } 

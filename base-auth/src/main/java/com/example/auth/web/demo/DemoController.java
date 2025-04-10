@@ -10,7 +10,7 @@ import com.example.auth.annotation.RequiresLogin;
 import com.example.auth.annotation.RequiresPermission;
 import com.example.auth.annotation.RequiresRole;
 import com.example.auth.service.AuthService;
-import com.example.auth.utils.ResponseResult;
+import com.example.auth.response.Result;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,8 +34,8 @@ public class DemoController {
      */
     @GetMapping("/public")
     @AuthIgnore
-    public ResponseResult<String> publicApi() {
-        return ResponseResult.success("这是一个公共接口，无需认证");
+    public Result<String> publicApi() {
+        return Result.ok("这是一个公共接口，无需认证");
     }
     
     /**
@@ -45,8 +45,8 @@ public class DemoController {
      */
     @GetMapping("/login")
     @RequiresLogin
-    public ResponseResult<String> loginApi() {
-        return ResponseResult.success("您已登录，可以访问此接口");
+    public Result<String> loginApi() {
+        return Result.ok("您已登录，可以访问此接口");
     }
     
     /**
@@ -56,8 +56,8 @@ public class DemoController {
      */
     @GetMapping("/permission")
     @RequiresPermission("system:user:view")
-    public ResponseResult<String> permissionApi() {
-        return ResponseResult.success("您有system:user:view权限，可以访问此接口");
+    public Result<String> permissionApi() {
+        return Result.ok("您有system:user:view权限，可以访问此接口");
     }
     
     /**
@@ -67,8 +67,8 @@ public class DemoController {
      */
     @GetMapping("/permissions/and")
     @RequiresPermission(value = {"system:user:view", "system:user:edit"}, logical = Logical.AND)
-    public ResponseResult<String> permissionsAndApi() {
-        return ResponseResult.success("您同时拥有system:user:view和system:user:edit权限，可以访问此接口");
+    public Result<String> permissionsAndApi() {
+        return Result.ok("您同时拥有system:user:view和system:user:edit权限，可以访问此接口");
     }
     
     /**
@@ -78,8 +78,8 @@ public class DemoController {
      */
     @GetMapping("/permissions/or")
     @RequiresPermission(value = {"system:user:view", "system:user:edit"}, logical = Logical.OR)
-    public ResponseResult<String> permissionsOrApi() {
-        return ResponseResult.success("您拥有system:user:view或system:user:edit权限之一，可以访问此接口");
+    public Result<String> permissionsOrApi() {
+        return Result.ok("您拥有system:user:view或system:user:edit权限之一，可以访问此接口");
     }
     
     /**
@@ -89,8 +89,8 @@ public class DemoController {
      */
     @GetMapping("/role")
     @RequiresRole("admin")
-    public ResponseResult<String> roleApi() {
-        return ResponseResult.success("您有admin角色，可以访问此接口");
+    public Result<String> roleApi() {
+        return Result.ok("您有admin角色，可以访问此接口");
     }
     
     /**
@@ -100,8 +100,8 @@ public class DemoController {
      */
     @GetMapping("/roles/and")
     @RequiresRole(value = {"admin", "system"}, logical = Logical.AND)
-    public ResponseResult<String> rolesAndApi() {
-        return ResponseResult.success("您同时拥有admin和system角色，可以访问此接口");
+    public Result<String> rolesAndApi() {
+        return Result.ok("您同时拥有admin和system角色，可以访问此接口");
     }
     
     /**
@@ -111,8 +111,8 @@ public class DemoController {
      */
     @GetMapping("/roles/or")
     @RequiresRole(value = {"admin", "system"}, logical = Logical.OR)
-    public ResponseResult<String> rolesOrApi() {
-        return ResponseResult.success("您拥有admin或system角色之一，可以访问此接口");
+    public Result<String> rolesOrApi() {
+        return Result.ok("您拥有admin或system角色之一，可以访问此接口");
     }
     
     /**
@@ -122,7 +122,7 @@ public class DemoController {
      */
     @GetMapping("/user")
     @RequiresLogin
-    public ResponseResult<Object> userApi() {
-        return ResponseResult.success(authService.getLoginUser());
+    public Result<Object> userApi() {
+        return Result.ok(authService.getLoginUser());
     }
 } 

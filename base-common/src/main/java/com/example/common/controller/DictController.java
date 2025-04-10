@@ -2,7 +2,7 @@ package com.example.common.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.example.auth.annotation.RequiresPermission;
-import com.example.auth.utils.ResponseResult;
+import com.example.auth.response.Result;
 import com.example.common.model.dto.DictItemDTO;
 import com.example.common.model.dto.DictTypeDTO;
 import com.example.common.model.vo.DictItemVO;
@@ -43,14 +43,14 @@ public class DictController {
      */
     @GetMapping("/type/page")
     @RequiresPermission("system:dict:list")
-    public ResponseResult<PageInfo<DictTypeVO>> pageDictType(
+    public Result<PageInfo<DictTypeVO>> pageDictType(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String code,
             @RequestParam(required = false) Integer status) {
         PageInfo<DictTypeVO> result = dictService.pageDictType(pageNum, pageSize, name, code, status);
-        return ResponseResult.success(result);
+        return Result.ok(result);
     }
 
     /**
@@ -61,9 +61,9 @@ public class DictController {
      */
     @GetMapping("/type/{id}")
     @RequiresPermission("system:dict:query")
-    public ResponseResult<DictTypeVO> getDictTypeById(@PathVariable String id) {
+    public Result<DictTypeVO> getDictTypeById(@PathVariable String id) {
         DictTypeVO dictType = dictService.getDictTypeById(id);
-        return ResponseResult.success(dictType);
+        return Result.ok(dictType);
     }
 
     /**
@@ -73,9 +73,9 @@ public class DictController {
      * @return 字典类型
      */
     @GetMapping("/type/code/{code}")
-    public ResponseResult<DictTypeVO> getDictTypeByCode(@PathVariable String code) {
+    public Result<DictTypeVO> getDictTypeByCode(@PathVariable String code) {
         DictTypeVO dictType = dictService.getDictTypeByCode(code);
-        return ResponseResult.success(dictType);
+        return Result.ok(dictType);
     }
 
     /**
@@ -86,9 +86,9 @@ public class DictController {
      */
     @PostMapping("/type")
     @RequiresPermission("system:dict:add")
-    public ResponseResult<DictTypeVO> addDictType(@Valid @RequestBody DictTypeDTO dto) {
+    public Result<DictTypeVO> addDictType(@Valid @RequestBody DictTypeDTO dto) {
         DictTypeVO dictType = dictService.addDictType(dto);
-        return ResponseResult.success(dictType);
+        return Result.ok(dictType);
     }
 
     /**
@@ -99,9 +99,9 @@ public class DictController {
      */
     @PutMapping("/type")
     @RequiresPermission("system:dict:edit")
-    public ResponseResult<DictTypeVO> updateDictType(@Valid @RequestBody DictTypeDTO dto) {
+    public Result<DictTypeVO> updateDictType(@Valid @RequestBody DictTypeDTO dto) {
         DictTypeVO dictType = dictService.updateDictType(dto);
-        return ResponseResult.success(dictType);
+        return Result.ok(dictType);
     }
 
     /**
@@ -112,9 +112,9 @@ public class DictController {
      */
     @DeleteMapping("/type/{id}")
     @RequiresPermission("system:dict:delete")
-    public ResponseResult<Boolean> deleteDictType(@PathVariable String id) {
+    public Result<Boolean> deleteDictType(@PathVariable String id) {
         boolean result = dictService.deleteDictType(id);
-        return ResponseResult.success(result);
+        return Result.ok(result);
     }
 
     /**
@@ -125,9 +125,9 @@ public class DictController {
      */
     @DeleteMapping("/type/batch")
     @RequiresPermission("system:dict:delete")
-    public ResponseResult<Boolean> batchDeleteDictType(@RequestBody String[] ids) {
+    public Result<Boolean> batchDeleteDictType(@RequestBody String[] ids) {
         boolean result = dictService.batchDeleteDictType(ids);
-        return ResponseResult.success(result);
+        return Result.ok(result);
     }
 
     // =============================== 字典项操作 ===============================
@@ -145,7 +145,7 @@ public class DictController {
      */
     @GetMapping("/item/page")
     @RequiresPermission("system:dict:list")
-    public ResponseResult<PageInfo<DictItemVO>> pageDictItem(
+    public Result<PageInfo<DictItemVO>> pageDictItem(
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(required = false) String dictTypeId,
@@ -153,7 +153,7 @@ public class DictController {
             @RequestParam(required = false) String label,
             @RequestParam(required = false) Integer status) {
         PageInfo<DictItemVO> result = dictService.pageDictItem(pageNum, pageSize, dictTypeId, dictTypeCode, label, status);
-        return ResponseResult.success(result);
+        return Result.ok(result);
     }
 
     /**
@@ -164,9 +164,9 @@ public class DictController {
      */
     @GetMapping("/item/{id}")
     @RequiresPermission("system:dict:query")
-    public ResponseResult<DictItemVO> getDictItemById(@PathVariable String id) {
+    public Result<DictItemVO> getDictItemById(@PathVariable String id) {
         DictItemVO dictItem = dictService.getDictItemById(id);
-        return ResponseResult.success(dictItem);
+        return Result.ok(dictItem);
     }
 
     /**
@@ -176,9 +176,9 @@ public class DictController {
      * @return 字典项列表
      */
     @GetMapping("/data/{dictTypeCode}")
-    public ResponseResult<List<DictItemVO>> getDictItemsByTypeCode(@PathVariable String dictTypeCode) {
+    public Result<List<DictItemVO>> getDictItemsByTypeCode(@PathVariable String dictTypeCode) {
         List<DictItemVO> dictItems = dictService.getDictItemsByTypeCode(dictTypeCode);
-        return ResponseResult.success(dictItems);
+        return Result.ok(dictItems);
     }
 
     /**
@@ -188,9 +188,9 @@ public class DictController {
      * @return 键值Map
      */
     @GetMapping("/map/{dictTypeCode}")
-    public ResponseResult<Map<String, String>> getDictMap(@PathVariable String dictTypeCode) {
+    public Result<Map<String, String>> getDictMap(@PathVariable String dictTypeCode) {
         Map<String, String> dictMap = dictService.getDictMap(dictTypeCode);
-        return ResponseResult.success(dictMap);
+        return Result.ok(dictMap);
     }
 
     /**
@@ -201,9 +201,9 @@ public class DictController {
      */
     @GetMapping("/item/type/{dictTypeId}")
     @RequiresPermission("system:dict:query")
-    public ResponseResult<List<DictItemVO>> getDictItemsByTypeId(@PathVariable String dictTypeId) {
+    public Result<List<DictItemVO>> getDictItemsByTypeId(@PathVariable String dictTypeId) {
         List<DictItemVO> dictItems = dictService.getDictItemsByTypeId(dictTypeId);
-        return ResponseResult.success(dictItems);
+        return Result.ok(dictItems);
     }
 
     /**
@@ -214,9 +214,9 @@ public class DictController {
      */
     @PostMapping("/item")
     @RequiresPermission("system:dict:add")
-    public ResponseResult<DictItemVO> addDictItem(@Valid @RequestBody DictItemDTO dto) {
+    public Result<DictItemVO> addDictItem(@Valid @RequestBody DictItemDTO dto) {
         DictItemVO dictItem = dictService.addDictItem(dto);
-        return ResponseResult.success(dictItem);
+        return Result.ok(dictItem);
     }
 
     /**
@@ -227,9 +227,9 @@ public class DictController {
      */
     @PutMapping("/item")
     @RequiresPermission("system:dict:edit")
-    public ResponseResult<DictItemVO> updateDictItem(@Valid @RequestBody DictItemDTO dto) {
+    public Result<DictItemVO> updateDictItem(@Valid @RequestBody DictItemDTO dto) {
         DictItemVO dictItem = dictService.updateDictItem(dto);
-        return ResponseResult.success(dictItem);
+        return Result.ok(dictItem);
     }
 
     /**
@@ -240,9 +240,9 @@ public class DictController {
      */
     @DeleteMapping("/item/{id}")
     @RequiresPermission("system:dict:delete")
-    public ResponseResult<Boolean> deleteDictItem(@PathVariable String id) {
+    public Result<Boolean> deleteDictItem(@PathVariable String id) {
         boolean result = dictService.deleteDictItem(id);
-        return ResponseResult.success(result);
+        return Result.ok(result);
     }
 
     /**
@@ -253,9 +253,9 @@ public class DictController {
      */
     @DeleteMapping("/item/batch")
     @RequiresPermission("system:dict:delete")
-    public ResponseResult<Boolean> batchDeleteDictItem(@RequestBody String[] ids) {
+    public Result<Boolean> batchDeleteDictItem(@RequestBody String[] ids) {
         boolean result = dictService.batchDeleteDictItem(ids);
-        return ResponseResult.success(result);
+        return Result.ok(result);
     }
 
     /**
@@ -265,8 +265,8 @@ public class DictController {
      */
     @DeleteMapping("/refresh")
     @RequiresPermission("system:dict:edit")
-    public ResponseResult<Void> refreshCache() {
+    public Result<Void> refreshCache() {
         dictService.refreshCache();
-        return ResponseResult.success();
+        return Result.ok();
     }
 } 

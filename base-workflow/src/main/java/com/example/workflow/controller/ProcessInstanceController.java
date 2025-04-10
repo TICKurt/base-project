@@ -1,6 +1,6 @@
 package com.example.workflow.controller;
 
-import com.example.core.response.Result;
+import com.example.auth.response.Result;
 import com.example.workflow.model.vo.ProcessInstanceVO;
 import com.example.workflow.service.ProcessInstanceService;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,7 @@ public class ProcessInstanceController {
             return Result.ok(processInstanceId);
         } catch (Exception e) {
             log.error("启动流程实例失败", e);
-            return Result.fail("启动流程实例失败：" + e.getMessage());
+            return Result.error("启动流程实例失败：" + e.getMessage());
         }
     }
 
@@ -66,7 +66,7 @@ public class ProcessInstanceController {
             return Result.ok(processInstanceId);
         } catch (Exception e) {
             log.error("启动流程实例失败", e);
-            return Result.fail("启动流程实例失败：" + e.getMessage());
+            return Result.error("启动流程实例失败：" + e.getMessage());
         }
     }
 
@@ -92,7 +92,7 @@ public class ProcessInstanceController {
             return Result.ok(list);
         } catch (Exception e) {
             log.error("查询流程实例列表失败", e);
-            return Result.fail(null);
+            return Result.error(null);
         }
     }
 
@@ -113,7 +113,7 @@ public class ProcessInstanceController {
             }
         } catch (Exception e) {
             log.error("获取流程实例详情失败", e);
-            return Result.fail(null);
+            return Result.error(null);
         }
     }
 
@@ -130,7 +130,7 @@ public class ProcessInstanceController {
             return Result.ok("挂起成功");
         } catch (Exception e) {
             log.error("挂起流程实例失败", e);
-            return Result.fail("挂起流程实例失败：" + e.getMessage());
+            return Result.error("挂起流程实例失败：" + e.getMessage());
         }
     }
 
@@ -147,7 +147,7 @@ public class ProcessInstanceController {
             return Result.ok("激活成功");
         } catch (Exception e) {
             log.error("激活流程实例失败", e);
-            return Result.fail("激活流程实例失败：" + e.getMessage());
+            return Result.error("激活流程实例失败：" + e.getMessage());
         }
     }
 
@@ -167,7 +167,7 @@ public class ProcessInstanceController {
             return Result.ok("删除成功");
         } catch (Exception e) {
             log.error("删除流程实例失败", e);
-            return Result.fail("删除流程实例失败：" + e.getMessage());
+            return Result.error("删除流程实例失败：" + e.getMessage());
         }
     }
 
@@ -184,7 +184,7 @@ public class ProcessInstanceController {
             return Result.ok(variables);
         } catch (Exception e) {
             log.error("获取流程变量失败", e);
-            return Result.fail(null);
+            return Result.error(null);
         }
     }
 
@@ -204,7 +204,7 @@ public class ProcessInstanceController {
             return Result.ok("设置成功");
         } catch (Exception e) {
             log.error("设置流程变量失败", e);
-            return Result.fail("设置流程变量失败：" + e.getMessage());
+            return Result.error("设置流程变量失败：" + e.getMessage());
         }
     }
 } 
